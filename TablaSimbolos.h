@@ -86,16 +86,17 @@ void mostrarNodo(TSNodo n);
 
 /////////////////////////////////////////////     Métodos sobre la Tabla 
 TablaSimbolos newTablaSimbolos();
-void addNodo(TablaSimbolos TS, TSNodo n);
+void addNodo(TablaSimbolos *TS, TSNodo n);
 void deleteNodo(TablaSimbolos *TS);
 void deleteBloque(TablaSimbolos *TS);
 void deleteTS(TablaSimbolos *TS);
-TSNodo *getNodo(TablaSimbolos TS);
+TSNodo *getNodo(TablaSimbolos *TS);
 TSNodo comprobarInsercion(TablaSimbolos TS, char *nombre, int nres);
-TSNodo existeNodo(TablaSimbolos TS, char *nombre);
+int existeNodo(TablaSimbolos TS, char *nombre);
 void tsMete(TablaSimbolos *p, TSNodo n, char *resultado);
 TSNodo tsSaca(TablaSimbolos *p);
 int isEmpty(TablaSimbolos p);
+void mostrarTabla(TablaSimbolos TS);
 ///////////////////////////////////////////
 
 
