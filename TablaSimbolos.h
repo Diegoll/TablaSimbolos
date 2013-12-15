@@ -66,7 +66,7 @@ typedef struct pila TablaSimbolos;
 ///////////////////////////////////////////     Metodos sobre los nodos
 
 TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea);
-char* getNombreNodo(TSNodo n);
+char* getNombreNodo(TSNodo *n);
 TEntrada getTipoNodo(TSNodo n);
 TDato getTipoDatoNodo(TSNodo n);
 int getNParNodo(TSNodo n);
@@ -78,7 +78,7 @@ int compararNodos(TSNodo n1, TSNodo n2);
 void asignarTipoDatoNodo(TSNodo *n, TDato tipo);
 void incrementarNumParNodo(TSNodo *n);
 void borrarNodo(TSNodo *n);
-void mostrarNodo(TSNodo);
+void mostrarNodo(TSNodo n);
 
 
 /////////////////////////////////////////////////
@@ -86,28 +86,27 @@ void mostrarNodo(TSNodo);
 
 /////////////////////////////////////////////     Métodos sobre la Tabla 
 TablaSimbolos newTablaSimbolos();
-void addNodo(TablaSimbolos TS, TSNodo n);
+void addNodo(TablaSimbolos *TS, TSNodo n);
 void deleteNodo(TablaSimbolos *TS);
 void deleteBloque(TablaSimbolos *TS);
 void deleteTS(TablaSimbolos *TS);
-TSNodo *getNodo(TablaSimbolos TS);
+TSNodo *getNodo(TablaSimbolos *TS);
 TSNodo comprobarInsercion(TablaSimbolos TS, char *nombre, int nres);
-TSNodo existeNodo(TablaSimbolos TS, char *nombre);
-
-
-void tablaSimbolos_mete(TablaSimbolos *p, TipoEntrada entrada, char *nombre, TipoDato tipoDato, int parametros, int linea, char *resultado);
-Tentrada tablaSimbolos_saca(TablaSimbolos *p);
-int tablaSimbolos_vacia(TablaSimbolos p);
+int existeNodo(TablaSimbolos TS, char *nombre);
+void tsMete(TablaSimbolos *p, TSNodo n, char *resultado);
+TSNodo tsSaca(TablaSimbolos *p);
+int isEmpty(TablaSimbolos p);
+void mostrarTabla(TablaSimbolos TS);
 ///////////////////////////////////////////
 
 
-/**
- * Otros metodos publicos auxiliares
- */
-int existeIDEnAmbito(TablaSimbolos t, char *nombreIdentificador);
-int esPalabraReservada (char *nombreIdentificador);
-Tentrada* buscaEntradaTPCons(TablaSimbolos t, char *nombreIdentificador);
-void muestraTabla(TablaSimbolos t);
+//////////////////////////////////////////////// Resto de funciones
+
+int conforme_salgan_las_vamos_haciendo;
+//int existeIDEnAmbito(TablaSimbolos t, char *nombreIdentificador);
+//int esPalabraReservada (char *nombreIdentificador);
+//Tentrada* buscaEntradaTPCons(TablaSimbolos t, char *nombreIdentificador);
+//void muestraTabla(TablaSimbolos t);
 //void comprobarLlamadaFuncion(TablaSimbolos *t);
 
 //void modificaNParametros(TablaSimbolos *t, char *nombre, int n);
