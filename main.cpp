@@ -50,7 +50,7 @@ int main(int argc, char** argv) {
     printf("\nt2 esta vacia? %d\n",isEmpty(ts2));
     
     printf("\n Existe nodo cadena1 en t1? pos %d\n",existeNodo(ts1,"cadena1"));
-    printf("\n Existe nodo cadena1 en t1? pos %d\n",existeNodo(ts1,"contador"));
+    printf("\n Existe nodo contador en t1? pos %d\n",existeNodo(ts1,"contador"));
     printf("\n Existe nodo cadena1 en t2? pos %d\n",existeNodo(ts2,"cadena1"));
     
     printf("\n\nBorrar t1 hasta marca\n");
