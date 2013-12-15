@@ -65,13 +65,13 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/tablasimbolos.exe: ${OBJECTFILES}
 
 ${OBJECTDIR}/TablaSimbolos.o: TablaSimbolos.c 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.c) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/TablaSimbolos.o TablaSimbolos.c
+	${RM} $@.d
+	$(COMPILE.c) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/TablaSimbolos.o TablaSimbolos.c
 
 ${OBJECTDIR}/main.o: main.cpp 
 	${MKDIR} -p ${OBJECTDIR}
-	${RM} "$@.d"
-	$(COMPILE.cc) -g -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/main.o main.cpp
+	${RM} $@.d
+	$(COMPILE.cc) -g -MMD -MP -MF $@.d -o ${OBJECTDIR}/main.o main.cpp
 
 # Subprojects
 .build-subprojects:
