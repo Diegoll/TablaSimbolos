@@ -5,6 +5,12 @@
 #include "TablaSimbolos.h"
 int linea_actual = 0; 
 
+TablaSimbolos ts;
+TSNodo nodo;
+TSNodo nodoaux, nodoaux2, nodoaux3;
+TDato tret;
+int posicion, posicion2, posicion3, flag, anidamiento;
+
 void yyerror (char *msg)
 {
 fprintf(stderr, "\n");
@@ -16,7 +22,7 @@ fprintf(stderr,"Error de sintaxis en la linea: %d",linea_actual);
 %start prog
 %token PDE ASI MAIN PYC ID NUM PIZ CAD FOR IF LIB MODC MODD MODS ELSE WHILE INT CHAR STRING FLOAT BOOLEAN STACK IB FB INCRE DECRE
 %token INC DEF TDEF PRINTF SCANF STRCAT STRNCAT STRLEN STRCMP STRCPY STRCHR STREXT DISTINTO 
-%token MENIGUAL MENOR MAYIGUAL MAYOR COMP PTO ALM COMA AMPER TRUE FALSE NOT 
+%token MENIGUAL MENOR MAYIGUAL MAYOR COMP PTO ALM COMA AMPER TRUE FALSE NOT RET REAL
 
 %left MENOR MAYOR MENIGUAL MAYIGUAL DISTINTO NOT PIZ PDE COMP ASI
 %left SUM RES
@@ -26,397 +32,687 @@ fprintf(stderr,"Error de sintaxis en la linea: %d",linea_actual);
 %%
 /* Secci�n de producciones que definen la gram�tica */
 
-prog :  dec1 dec2 | dec2
+prog :  {ts = newTablaSimbolos();} 
+	dec1 dec2 {deleteTSimbolos(&ts);}
+	| dec2{deleteTSimbolos(&ts);}
 ;
-dec1:  incs defs| incs | defs 
+dec1:  incs const | const | incs 
 ;
 dec2 : tipos vars funcs main | tipos vars main | tipos funcs main | vars funcs main | tipos main | vars main | funcs main | main
 ;
+
+const : const | cons PYC
+;
+
+cons: DEF ID expresion 
+	{
+		if(existeNodo(ts,$2.nombre)!=-1)
+		{
+			printf("\nError: linea %d: La constante %s ya existe", $2.linea, $2.nombre);
+		}else{
+			if($3.error==0)
+			{
+				nodo=nuevaEntrada(constante, $2.nombre, $3.tipo, 0,  $2.linea, $3.tipopila);
+				addNodo(&ts,nodo);
+				$$.error=0;
+			}else{
+				$$.error=1;
+			}
+			
+		}
+	}
+;
+
 incs : incs inc | inc
 ;
 inc : INC MENOR LIB MAYOR
-;
-defs : defs def | def
-;
-def : DEF ID expresion
 ;
 tipos : TDEF tipo ID PYC | TDEF stack ID PYC
 ;
 vars : vars var | var
 ;
-id_exp :  ID  ASI expresion | ID
+id_exp :  ID  ASI expresion 
+		{
+			if($3.error==0)
+			{
+				if(existeNodo(ts,$1.nombre)!=-1)
+				{
+					printf("\nError: linea %d: La variable %s ya existe", $1.linea, $1.nombre);
+				}else{
+					if($3.error==0)
+					{
+						nodo=nuevaEntrada(variable, $1.nombre, not_assigned, 0,  $1.linea, unknown);
+						addNodo(&ts,nodo);
+						$$.error=0;
+					}else{
+						$$.error=1;
+					}
+				}
+			}
+			else{
+				$$.error=1;
+			}
+	}
+	| ID
+	{
+		if(existeNodo(ts,$1.nombre)!=-1)
+		{
+			printf("\nError: linea %d: La variable %s ya existe", $1.linea, $1.nombre);
+		}else{
+			if($3.error==0)
+			{
+				nodo=nuevaEntrada(variable, $1.nombre, not_assigned, 0,  $1.linea, unknown);
+				addNodo(&ts,nodo);
+				$$.error=0;
+			}else{
+				$$.error=1;
+			}
+		}
+	}
 ;
-var :  tipo id_exps PYC | stack id_exps PYC
+var :  tipo id_exps PYC 
+	{
+		asignarTipoDatoNodo(ts.tabla[existeNodo(ts,$1.nombre)], $1.tipo);
+		asignarTipoPilaNodo(ts.tabla[existeNodo(ts,$1.nombre)], $1.tipopila);
+	}
+	| stack id_exps PYC
+	{
+		asignarTipoDatoNodo(ts.tabla[existeNodo(ts,$1.nombre)], $1.tipo);
+		asignarTipoPilaNodo(ts.tabla[existeNodo(ts,$1.nombre)], $1.tipopila);
+	}
 ;
-id_exps : id_exps COMA id_exp | id_exp
+id_exps : id_exps COMA id_exp {anidamiento++;} | id_exp {anidamiento=1;}
 ;
 funcs : funcs func | func
 ;
-func : tipo ID PIZ args PDE{
-	tdev=unknown;
-	nfallos=0;
-	tam = getTamTabla(ts);
-	i=tam-$4.num_param;
-	while(i<tam){
-		ent=getNodoxPosicion(ts,i);
-		if(ent->TDato!=error){
-			j=i+1;
-			while(j<tam){
-				entaux=getNodoxPosicion(ts, j);
-				if(entaux->TDato!=error){
-					if(strcmp(ent->nombre, entaux->nombre)==0){
-						printf("\nError: linea %d: ya existe un parametro con este mismo nombre: %s, funcion: %s", $2.linea, entaux->nombre, $2.nombre);
-						setTipoDatoxPos(ts, j, error, not_assigned);
-					}
-				}
-				j++;
-			}
-		}
-		i++;
-	}
-
-	ent=comprobarInsercion(ts, $2.nombre, ncons+nres);
-	if(ent==NULL){
-		ent=checkNodoxNombre(ts, $1.nombre, ncons, nres);
-		if(ent!=NULL){
-			ent=newNodo($2.nombre, funcion, ent->TDato, $4.num_param, ent->TPila);
-			addNodo(ts, ent);
-			ent=newNodo("{", marca, unknown, 0, not_assigned);
-			addNodo(ts, ent);
-			$$.control=0;
-		}else{
-			if($1.TDato!=unknown){
-				ent=newNodo($2.nombre, funcion, $1.TDato, $4.num_param, not_assigned);
-				addNodo(ts, ent);
-				ent=newNodo("{", marca, unknown, 0, not_assigned);
-				addNodo(ts, ent);
-				$$.control=0;
-			}else{
-				printf("\nError: linea %d: no existe nigun tipo definido con este nombre: %s, funcion: %s", $2.linea, $1.nombre, $2.nombre);
-				ent=newNodo($2.nombre, funcion, error, $4.num_param, not_assigned);
-				addNodo(ts, ent);
-				ent=newNodo("{", marca, unknown, 0, not_assigned);
-				addNodo(ts, ent);
-				$$.control=1;
-			}
-		}
-	}else{
-		printf("\nError: linea %d: ya existe una variable declarada con este nombre: %s", $2.linea, $2.nombre);
-		ent=newNodo($2.nombre, funcion, error, $4.num_param, not_assigned);
-		addNodo(ts, ent);
-		ent=newNodo("{", marca, unknown, 0, not_assigned);
-		addNodo(ts, ent);
-		$$.control=1;
-		nfallos=1;
-	}
-}
-funcs cuerpo {
-	if(tdev==unknown){
-		printf("\nError: linea %d: falta el devuelve en la funcion %s.", $2.linea, $2.nombre);
-	}else{
-		ent=checkDeclaracion(ts, $2.nombre);
-		if(ent->TDato!=error){
-			if(tdev!=ent->TDato){
-				if(ent->TDato==tfloat && (tdev==tint || tdev==tfloat)){
-
-				}else{
-					printf("\nError: linea %d: el tipo del devuelve no coincide con el de la funcion %s.", $2.linea, $2.nombre);
-				}
-			}else{
-				if(ent->TDato==tstack){
-					if(ent->TPila!=tpiladev){
-						printf("\nError: linea %d: tipo tda incompatibles al devolver el dato en la funcion %s", $2.linea, $2.nombre);
-					}
-				}
-			}
-		}
-		
-	}
-	deleteBloque(&ts);
-	ent=getNodoxPosicion(ts, getTamTabla(ts)-1);
-	if(ent->TDato==error){
-		deleteFuncionIncorrecta(&ts);
-	}
-
-}
-|tipo ID PIZ PDE	{
-    tdes = unknown;
-    ent = comprobarInsercion(ts,$2.nombre, ncons+nres);
-    if(ent == NULL){
-        ent = checkNombrexNodo(ts, $1.nombre, ncons, nres);
-        if(ent!=NULL){
-            ent=NewNodo($2.nombre, funcion, ent->TDato, 0, ent->TPila);
-            addNodo(ts,ent);
-            ent = newNodo("{", marca, unknown, 0, not_assigned);
-            addNodo(ts, ent);
-            $$.control=0;
-        }else{
-        	if($1.TDato!=unknown){
-        		ent=newNodo($2.nombre, funcion, $1.TDato, 0, not_assigned);
-        		addNodo(ts, ent);
-        		ent=newNodo("{", marca,unknown, 0,not_assigned);
-        		addNodo(ts, ent);
-        		$$.control=0;
-        	}else{
-        		printf("\nError: linea %d: el tipo %s no se encuentra definido", $2.linea, $1.nombre);
-        		ent=newNodo($5.nombre, funcion, error, 0, not_assigned);
-        		addNodo(ts, ent);
-        		ent= newNodo("{", marca, unknown, 0, not_assigned);
-        		addNodo(ts, ent);
-        		$$.control=1;
-        	}
-        }
-    }else{
-    	printf("\nError: linea %d: ya existe una variable declarada con este nombre: %s", $5.linea, $5.nombre);
-    	ent=newNodo($5.nombre, funcion, error, 0, not_assigned);
-    	addNodo(ts,ent);
-    	ent=newNodo("{", marca, unknown, 0, not_assigned);
-    	addNodo(ts, ent);
-    	$$.control=1;
-    }
-}funcs cuerpo {
-	if(tdev==unknown){
-		printf("\nError: linea %d: la función %s no devuelve nada.", $2.linea, $2.nombre);
-	}else{
-		ent=checkDeclaracion(ts, $2.nombre);
-		if(ent->TDato!=error){
-			if(tdev!=ent->TDato){
-				if(ent->TDato==tfloat && (tdev==tint || tdev==tfloat)){
-
-				}else{
-					printf("\nError: linea %d: el tipo devuelto no coincide con el de la funcion %s", $2.linea, $2.nombre);
-				}
-			}else{
-				if(ent->TDato==tstack){
-					if(ent->TPila!=tpiladev){
-						printf("\nError: linea %d: tipo tda incompatible al devolver el dato de la función %S", $2.linea, $2.nombre);
-					}
-				}
-			}
-		}
-	}
-	deleteNodo(&ts);
-	ent=getNodoxPosicion(ts, getTamTabla(ts)-1);
-	if(ent->TDato==error){
-		deleteFuncionIncorrecta(&ts);
-	}
-	
-}|  STACK MENOR tipo MAYOR ID PIZ args PDE {
-		tdev=unknown;
-		tpiladev=not_assigned;
-		tope=getTopeTS(ts);
-		i=tope-$7.num_param;
-		while(i<tope){
-			ent=getEntradaPos(ts, i);
-			if(ent->TDato!=error){
-				j=i+1;
-				while(j<tope){
-					entaux=getEntradaPos(ts, j);
-					if(entaux->TDato!=error){
-						if(strcmp(ent->nombre, entaux->nombre)==0){
-							printf("\nError: linea %d: ya existe un parametro con este mismo nombre: %s", $5.linea, entaux->nombre);
-							setTipoDatoPos(ts, j, error, not_assigned);
-						}
-					}
-					j++;
-				}
-			}
-			i++;
-		}
-		ent=checkParaInsertar(ts, $5.nombre, ncons+nres);
-		if(ent==NULL){
-			ent=checkNombreDefTipo(ts, $3.nombre, ncons, nres);
-			if(ent!=NULL){
-				if(ent->TDato!=pila){
-					ent=newNodo($5.nombre, funcion, pila, $7.num_param, ent->TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=0;
-				}else{
-					printf("\nError: linea %d: no se permite el encadenamiento de tda's en las funciones.", $5.linea);
-					ent=newNodo($5.nombre, funcion, error, $7.num_param, ent->TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=1;
-				}
-			}else{
-				if($3.TDato!=unknown){
-					ent=newNodo($5.nombre, funcion, pila, $7.num_param, $3.TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=0;
-				}else{
-					printf("\nError: linea %d: no existe nigun tipo definido con este nombre: %s", $5.linea, $3.nombre);
-					ent=newNodo($5.nombre, funcion, error, $7.num_param, $3.TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=1;
-				}
-			}
-		}else{
-			printf("\nError: linea %d: ya existe una variable declarada con este nombre: %s", $5.linea, $5.nombre);
-			ent=newNodo($5.nombre, funcion, error, $7.num_param, $3.TDato);
-			addNodo(ts, ent);
-			ent=newNodo("{", marca, unknown, 0, not_assigned);
-			addNodo(ts, ent);
-			$$.control=1;
-		}
-	}
-	funcs cuerpo {
-		if(tdev==unknown){
-			printf("\nError: linea %d: falta el devuelve en la funcion %s.", $5.linea, $5.nombre);
-		}else{
-			if(tdev==pila){
-				ent=checkConsulta(ts, $5.nombre);
-				if(ent->tPila!=tpiladev){
-					printf("\nError: linea %d: tipo tda incompatibles al devolver el dato en la funcion %s", $5.linea, $5.nombre);
-				}
-			}else{
-				printf("\nError: linea %d: tipo incompatible en el devuelve de la funcion %s", $5.linea, $5.nombre);
-			}
-		}
-		//si pasa el bloque "todo ha ido bien", borramos el bloque e insertamos el nombre de la función
-		deleteBloque(&ts);
-		ent=getEntradaPos(ts, getTopeTS(ts)-1);
-		if(ent->TDato==error){
-			deleteFuncionErronea(&ts);
-		}
-	}
-	| STACK MENOR tipo MAYOR ID PIZ PDE {
-		tdev=unknown;
-		tpiladev=not_assigned;
-		ent=comprobarInsercion(ts, $5.nombre, ncons+nres);
-		if(ent==NULL){
-			ent=checkNombrexNodo(ts, $3.nombre, ncons, nres);
-			if(ent!=NULL){
-				if(ent->TDato!=pila){
-					ent=newNodo($5.nombre, funcion, pila, 0, ent->TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=0;
-				}else{
-					printf("\nError: linea %d: no se permite el encadenamiento de tda's en las funciones.", $5.linea);
-					ent=newNodo($5.nombre, funcion, error, 0, ent->TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=1;
-				}
-			}else{
-				if($3.TDato!=unknown){
-					ent=newNodo($5.nombre, funcion, pila, 0, $3.TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=0;
-				}else{
-					printf("\nError: linea %d: no existe nigun tipo definido con este nombre: %s", $5.linea, $3.nombre);
-					ent=newNodo($5.nombre, funcion, error, 0, $3.TDato);
-					addNodo(ts, ent);
-					ent=newNodo("{", marca, unknown, 0, not_assigned);
-					addNodo(ts, ent);
-					$$.control=1;
-				}
-			}
-		}else{
-			printf("\nError: linea %d: ya existe una variable declarada con este nombre: %s", $5.linea, $5.nombre);
-			ent=newNodo($5.nombre, funcion, error, 0, $3.TDato);
-			addNodo(ts, ent);
-			ent=newNodo("{", marca, unknown, 0, not_assigned);
-			addNodo(ts, ent);
-			$$.control=1;
-		}
-	}
-	funcs cuerpo {
-		if(tdev==unknown){
-			printf("\nError: linea %d: falta el devuelve en la funcion %s.", $5.linea, $5.nombre);
-		}else{
-			if(tdev==pila){
-				ent=checkConsulta(ts, $5.nombre);
-				if(ent->tPila!=tpiladev){
-					printf("\nError: linea %d: tipo tda incompatibles al devolver el dato en la funcion %s", $5.linea, $5.nombre);
-				}
-			}else{
-				printf("\nError: linea %d: tipo incompatible en el devuelve de la funcion %s", $5.linea, $5.nombre);
-			}
-		}
-		deleteBloque(&ts);
-		ent=getEntradaPos(ts, getTopeTS(ts)-1);
-		if(ent->TDato==error){
-			deleteFuncionErronea(&ts);
-		}
-	}
-	;
-args: COMA arg {$$.num_param=$1.num_param+1;}
-	| arg {$$.num_param=1;}
-;
-arg: tipo ID{
-	ent=checkNombrexNodo(ts,$1.nombre, ncons, nres);
-	if(ent==NULL){
-		if($1.TDato==unknown){
-			printf("\nError: linea %d: no se ha declarado el tipo anteriormente: %s",$2.linea, $1.nombre);
-			ent=newNodo($2.nombre, parametro_formal, error, 0, not_assigned);
-			addNodo(ts, ent);
-		}else{
-			ent=newNodo($2.nombre, parametro_formal, $1.TDato, 0, not_assigned);
-			addNodo(ts, ent);
-		}
-	}else{
-		ent=newNodo($2.nombre,parametro_formal, ent->TDato, 0, ent->TPila);
-		addNodo(ts,ent);
-	}
-| STACK MENOR tipo MAYOR ID {
-	ent=checkNombreDefTipo(ts, $3.nombre, ncons, nres);
-	if(ent==NULL){
-		if($3.TDato==unknown){
-			printf("\nError: linea %d: no se ha declarado el tipo anteriormente: %s", $5.linea, $3.nombre);
-			ent=newNodo($5.nombre, parametro_formal, error, 0, not_assigned);
-			addNodo(ts, ent);
-		}else{
-			ent=newNodo($5.nombre, parametro_formal, tstack, 0, $3.TDato);
-			addNodo(ts, ent);
-		}
-	}else{
-		if(ent->TDato!=tstack){
-			ent=NewNodo($2.nombre, parametro_formal, tstack, 0, ent->TDato);
-			addNodo(ts, ent);
-		}else{
-			printf("\nError: linea %d: no se permiten pilas encadenadas. Parametro: %s", $5.linea, $5.nombre);
-			ent=newNodo($5.nombre, parametro_formal, error, 0, not_assigned);
-			addNodo(ts, ent);
-		}
-	}
-}
+func : tipo ID PIZ PDE funcs cuerpo |  tipo ID PIZ tipo ID PDE cuerpo
 ;
 insts: insts inst | inst
 ;
 inst : leer | escribir | if | while | for | expresion PYC | mete
 ;
-tipo : STRING | INT | CHAR | FLOAT | BOOLEAN 
+
+tipo : STRING{$$.tipo=tstring; $$.tipopila=tstring;} 
+	| INT{$$.tipo=tint; $$.tipopila=tint;} 
+	| CHAR{$$.tipo=tchar;$$.tipopila=tchar;} 
+	| FLOAT {$$.tipo=tfloat;$$.tipopila=tfloat;}
+	| BOOLEAN {$$.tipo=tboolean;$$.tipopila=tboolean;}
 ;
-stack : STACK MENOR tipo MAYOR
+stack : STACK MENOR tipo MAYOR {$$.tipo=tstack; $$.tipopila=$3.tipopila;}
 ;
 cuerpo : IB vars insts FB | IB insts FB | IB vars FB | IB  FB | IB vars funcs insts FB | IB vars funcs FB | IB funcs insts FB | IB funcs FB 
 ;
 asig : ID ASI expresion
+	{
+		if($3.error==0)
+		{
+			if(existeNodoScope(ts,$1.nombre)==-1)
+			{
+				$$.error=1;
+				$$.tipo=unknown;
+				printf("\nError: linea %d: La variable %s no esta definida en este bloque", $1.linea, $1.nombre);
+			}else{
+				nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+				if((nodoaux.tipo==$3.tipo)&&(nodoaux.tipopila==$3.tipopila)
+				{
+					$$.nombre=$1.nombre;
+					$$.error=0;
+					$$.tipo=nodoaux.tipo;
+					$$.tipopila=nodoaux.tipopila;
+					$$.entrada=nodoaux.entrada;
+				}else{
+					printf("\nError: linea %d: Asignacion de tipos diferentes", $1.linea);
+					$$.error=1;
+				}
+			}
+		}else{
+			$$.error=1;
+		}
+	}
 ;
-expresion :  expresion SUM expresion | expresion RES expresion | RES expresion %prec UMINUS| expresion MUL expresion | expresion DIV expresion | expresion MAYOR expresion | expresion MENOR expresion | expresion MAYIGUAL expresion | expresion MENIGUAL expresion | expresion DISTINTO expresion | expresion COMP expresion | TRUE | FALSE | NUM | llamada_funcion | PIZ expresion PDE | NOT expresion | ID | concatenar|longitud |comparar|copiar|concatenarn|buscar|extraer|CAD| incremento | decremento |asig | saca | longitud_pila  
+
+devuelve :RET PIZ exp PDE PYC
+{		
+	if($3.error==0)
+	{
+		$$.error=0
+		tret=$3.tipo;
+	}else{
+		$$.error=1;
+	}
+}
 ;
-leer : SCANF PIZ variables PDE PYC 
+
+expresion :  expresion SUM expresion 
+			{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede operar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede sumar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar", $1.linea);
+								$$.error=1;
+							}else{
+								if(($1.tipo==tboolean)||($3.tipo==tboolean)){
+									printf("\nError: linea %d: Un boolean no se puede operar aritmeticamente", $1.linea);
+									$$.error=1;
+								}else{
+									if(($1.tipo==tfloat)||($3.tipo==tfloat)){
+										$$.tipo=tfloat;
+									}else{
+										$$.tipo=tint;
+									}
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion RES expresion 
+			{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede operar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede sumar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar", $1.linea);
+								$$.error=1;
+							}else{
+								if(($1.tipo==tboolean)||($3.tipo==tboolean)){
+									printf("\nError: linea %d: Un boolean no se puede operar aritmeticamente", $1.linea);
+									$$.error=1;
+								}else{
+									if(($1.tipo==tfloat)||($3.tipo==tfloat)){
+										$$.tipo=tfloat;
+									}else{
+										$$.tipo=tint;
+									}
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| RES expresion %prec UMINUS
+			{
+				if($2.tipo==tint || $2.tipo==tfloat){
+					$$.tipo=$2.tipo;
+				}else{
+					if($2.error!=1){
+						printf("\nError: linea %d: expresion con tipos incompatibles", $1.linea);
+					}
+					$$.error=1;
+				}
+			}
+		| expresion MUL expresion 
+			{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede operar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede sumar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar", $1.linea);
+								$$.error=1;
+							}else{
+								if(($1.tipo==tboolean)||($3.tipo==tboolean)){
+									printf("\nError: linea %d: Un boolean no se puede operar aritmeticamente", $1.linea);
+									$$.error=1;
+								}else{
+									if(($1.tipo==tfloat)||($3.tipo==tfloat)){
+										$$.tipo=tfloat;
+									}else{
+										$$.tipo=tint;
+									}
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion DIV expresion 
+			{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede operar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede sumar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar", $1.linea);
+								$$.error=1;
+							}else{
+								if(($1.tipo==tboolean)||($3.tipo==tboolean)){
+									printf("\nError: linea %d: Un boolean no se puede operar aritmeticamente", $1.linea);
+									$$.error=1;
+								}else{
+									if(($1.tipo==tfloat)||($3.tipo==tfloat)){
+										$$.tipo=tfloat;
+									}else{
+										$$.tipo=tint;
+									}
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion MAYOR expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion MENOR expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion MAYIGUAL expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion MENIGUAL expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion DISTINTO expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| expresion COMP expresion 
+		{
+				if(($1.error!=1)&&($3.error!=1))
+				{
+					if(($1.tipo==tstack)||($3.tipo==tstack)){
+						printf("\nError: linea %d: Una Stack no se puede comparar", $1.linea);
+						$$.error=1;
+					}else{
+						if(($1.tipo==tstring)||($3.tipo==tstring)){
+							printf("\nError: linea %d: Una String no se puede operar, utiliza op de cadena", $1.linea);
+							$$.error=1;
+						}else{
+							if(($1.tipo==tchar)||($3.tipo==tchar)){
+								printf("\nError: linea %d: Un char no se puede operar mayorq", $1.linea);
+								$$.error=1;
+							}else{
+								if((($1.tipo==tboolean)&&($3.tipo!=tboolean))||(($3.tipo==tboolean)&&($1.tipo!=tboolean))){
+									printf("\nError: linea %d: Un boolean no se puedecomparar con numeros", $1.linea);
+									$$.error=1;
+								}else{
+									$$.tipo=tboolean;
+								}
+							
+							}
+						}
+					}
+				}
+			}
+		| TRUE {$$.tipo=tboolean;}
+		| FALSE {$$.tipo=tboolean;}
+		| NUM {$$.tipo=tint;}
+		| llamada_funcion
+			{
+				if($1.tipo==unknown){
+					$$.error=1;
+					printf("\nError: linea %d: Error en la llamada a funcion", $1.linea);
+				}else{
+					$$.tipo=nodoaux.tipo;
+					$$.entrada=nodoaux.entrada;
+					$$.tipopila=nodoaux.tipopila;
+					$$.error=0;
+				}
+			}
+		| PIZ expresion PDE 
+			{		
+				$$.tipo=$2.tipo;
+				$$.tipopila=$2.tipopila;
+				$$.entrada=$2.entrada;
+				$$.error=$2.error;
+			}
+		| NOT expresion 
+			{
+				if($2.error!=1)
+				{
+					if($2.tipo==tboolean){
+						$$.tipo=tboolean;
+					}else{
+						printf("\nError: linea %d: expresion con tipos incompatibles", $1.linea);
+						$$.error=1;
+					}
+				}
+			}
+		| ID 
+			{
+				if(existeNodoScope(ts,$1.nombre)==-1)
+				{
+					$$.error=1;
+					$$.tipo=unknown;
+					printf("\nError: linea %d: La variable %s no esta definida en este bloque", $1.linea, $1.nombre);
+				}else{
+					nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+					$$.tipo=nodoaux.tipo;
+					$$.entrada=nodoaux.entrada;
+					$$.tipopila=nodoaux.tipopila;
+					$$.error=nodoaux.error;
+				}
+			}
+
+		|concatenar			
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tstring;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|longitud 
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|comparar
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|copiar
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=unknown;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|concatenarn
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=unknown;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|buscar
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|extraer
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tstring;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|CAD
+			{
+				$$.tipo=tstring;
+				$$.error=0;
+			}
+		|incremento 			
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|decremento 			
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|asig {
+				$$.error=$1.error;
+			}
+		|pila_saca 			
+			{
+				if($1.error!=1)
+				{
+					$$.tipo=$1.tipopila;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
+		|longitud_pila  			
+		{
+				if($1.error!=1)
+				{
+					$$.tipo=tint;
+					$$.error=0;
+				}else{
+					$$.error=1;	
+				}
+			}
 ;
-variables : variables COMA AMPER ID | modificador
+
+
+
+leer : SCANF PIZ MODC COMA ID PDE PYC 
+		{
+			if(existeNodoScope(ts,$5.nombre)==-1)
+			{
+				$$.error=1;
+				$$.tipo=unknown;
+				printf("\nError: linea %d: La variable %s no esta definida en este bloque", $5.linea, $5.nombre);
+			}else{
+				nodoaux=ts.tabla[existeNodoScope(ts,$5.nombre)];
+				if((nodoaux.tipo=tstring)||(nodoaux.tipo=tchar))
+				{
+					$$.error=0;
+				}else{
+					$$.error=1;
+					$$.tipo=unknown;
+					printf("\nError: linea %d: se esperaba variable char o string", $5.linea, $5.nombre);
+				}
+			}
+		}
+	| SCANF PIZ MODD COMA ID PDE PYC
+		{
+			if(existeNodoScope(ts,$5.nombre)==-1)
+			{
+				$$.error=1;
+				$$.tipo=unknown;
+				printf("\nError: linea %d: La variable %s no esta definida en este bloque", $5.linea, $5.nombre);
+			}else{
+				nodoaux=ts.tabla[existeNodoScope(ts,$5.nombre)];
+				if(nodoaux.tipo=tint)
+				{
+					$$.error=0;
+				}else{
+					$$.error=1;
+					$$.tipo=unknown;
+					printf("\nError: linea %d: se esperaba una variable int", $5.linea, $5.nombre);
+				}
+			}
+		}
 ;
-modificador : MODC | MODD
-;
+
 escribir : PRINTF PIZ contenido PDE PYC 
 ;
-contenido : contenido COMA expresion | CAD
+contenido : contenido COMA expresion 	
+	{
+		if($3.tipo==pila){
+			printf("\nError: linea %d: no se puede escribir un STACK.", $3.linea);
+		}
+	}
+	| CAD
 ;
+
 if : IF  PIZ expresion PDE  bloque ELSE bloque | IF  PIZ expresion PDE bloque
 ;
 while : WHILE  PIZ expresion PDE  bloque
@@ -425,37 +721,342 @@ for : FOR PIZ PYC PYC PDE bloque | FOR PIZ expresiones PYC PYC PDE bloque | FOR 
 ;
 expresiones : expresiones COMA expresion | expresion
 ;
-incremento :  ID INCRE | INCRE ID
+incremento :  ID INCRE	{
+		if(existeNodoScope(ts,$1.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $1.linea, $1.nombre);
+		}else{
+			nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+			$$.error=0;
+			$$.tipo=tint;
+		}
+	} 
+	| INCRE ID 	{
+		if(existeNodoScope(ts,$2.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $2.linea, $2.nombre);
+		}else{
+			nodoaux=ts.tabla[existeNodoScope(ts,$2.nombre)];
+			$$.error=0;
+			$$.tipo=tint;
+		}
+	} 
 ;
-decremento : ID DECRE | DECRE ID
+decremento : ID DECRE {
+		if(existeNodoScope(ts,$1.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $1.linea, $1.nombre);
+		}else{
+			nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+			$$.error=0;
+			$$.tipo=tint;
+		}
+	} 
+	| DECRE ID{
+		if(existeNodoScope(ts,$2.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $2.linea, $2.nombre);
+		}else{
+			nodoaux=ts.tabla[existeNodoScope(ts,$2.nombre)];
+			$$.error=0;
+			$$.tipo=tint;
+		}
+	} 	
 ;
-main : INT MAIN PIZ PDE cuerpo
+main : INT MAIN PIZ PDE {
+		tret=unknown;
+		nodoaux=nuevaEntrada(funcion, $2.nombre, entero, 0, $2.linea, unknown);
+		addEntrada(ts, nodoaux);
+		nodoaux=nuevaEntrada(marca, "{", unknown, 0, $2.linea, unknown);
+		addEntrada(ts, nodoaux);
+	} cuerpo {		
+		if(tret==unknown){
+			printf("\nError: linea %d: falta el return en el main.", $2.linea);
+		}else{
+			if(tret!=tint){
+				printf("\nError: linea %d: main debe devolver entero", $1.linea);
+			}
+		}
+		deleteBloque(&ts);
+	}
 ;
 bloque : IB insts FB | inst  | PYC
 ;
-llamada_funcion : ID PIZ PDE | ID PIZ expresiones PDE
+llamada_funcion : ID PIZ PDE 
+	{
+		if(existeNodo(ts,$1.nombre)==-1)
+		{
+			$$.error=1;
+			printf("\nError: linea %d: La funcion no ha sido definida", $1.linea);
+		}else{
+			nodoaux=getNodoi(&ts,existeNodo(ts,$1.nombre));
+			if(nodoaux.numparam!=0){
+				$$.error=1;
+				printf("\nError: linea %d: Numero incorrecto de parametros", $1.linea);
+			}else{
+				if(nodoaux.entrada!=funcion)
+				{
+					$$.error=1;
+					printf("\nError: linea %d: La funcion no ha sido definida como funcion", $1.linea);
+				}else{
+					$$.error=0;
+					$$.tipo=nodoaux.tipo;
+					$$.tipopila=nodoaux.tipopila;
+				}	
+			}
+		}
+	}
+	| ID PIZ expresiones PDE
+	{
+		posicion=existeNodo(ts,$1.nombre);
+		if(posicion==-1)
+		{
+			$$.error=1;
+			printf("\nError: linea %d: La funcion no ha sido definida", $1.linea);
+		}else{
+			nodoaux=getNodoi(&ts,posicion);
+			if(nodoaux.numparam!=$3.numparam){
+				$$.error=1;
+				printf("\nError: linea %d: Numero incorrecto de parametros, se esperaban %d", $1.linea, $3.numparam);
+			}else{
+				if(nodoaux.entrada!=funcion)
+				{
+					$$.error=1;
+					printf("\nError: linea %d: La funcion no ha sido definida como funcion", $1.linea);
+				}else{
+					posicion2=ts.tamlog-nodoaux.numparam;
+					flag=0;
+					for(int i=1;i<=nodoaux.numparam;i++)
+					{
+						if(flag=0){
+							nodoaux2=getNodoi(&ts,posicion+i);
+							nodoaux3=getNodoi(&ts,posicion2+i);
+
+							if(nodoaux2.tipo!=nodoaux3.tipo){
+								$$.error=1;
+								flag=1;
+								printf("\nError: linea %d: El argumento %d es de tipo incorrecto", $1.linea, i);
+							}else{
+								if(nodoaux2.tipopila!=nodoaux3.tipopila){
+									flag=1;
+									$$.error=1;
+									printf("\nError: linea %d: El argumento %d tiene tipo de pila incorrecto", $1.linea, i);
+								}else{
+									$$.error=0;
+								}
+							}
+						}
+					}
+
+					$$.error=0;
+					$$.tipo=nodoaux.tipo;
+					$$.tipopila=nodoaux.tipopila;
+				}	
+			}
+		}
+	}
 ;
 concatenar : STRCAT PIZ expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: error en argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tstring){
+					printf("\nError: linea %d: error en argumento 2, se encontro un tipo distinto de cadena", $3.linea);
+					$$.error=1;
+				}else{
+					$$.tipo=tstring;
+				}
+			}
+		}
+	}
 ;
 concatenarn : STRNCAT PIZ expresion COMA expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1)&&($7.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: error en argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tstring){
+					printf("\nError: linea %d: error en argumento 2, se encontro un tipo distinto de cadena", $5.linea);
+					$$.error=1;
+				}else{
+					if($7.tipo!=tint){
+						printf("\nError: linea %d: error en argumento 3, se encontro un tipo distinto de entero", $7.linea);
+						$$.error=1;
+					}else{
+						$$.tipo=tstring;
+					}
+				}
+			}
+		}
+	}
 ;
 longitud :  STRLEN PIZ expresion PDE
+	{
+		if($3.error!=1)
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				$$.tipo=tint;
+				$$.error=0;
+			}
+		}
+	}
 ;
 comparar : STRCMP PIZ expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tstring){
+					printf("\nError: linea %d: argumento 2, se encontro un tipo distinto de cadena", $5.linea);
+					$$.error=1;
+				}else{
+					$$.tipo=tint;
+					$$.error=0;
+				}
+			}
+		}
+	}
 ;
 copiar : STRCPY PIZ expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tstring){
+					printf("\nError: linea %d: argumento 2, se encontro un tipo distinto de cadena", $5.linea);
+					$$.error=1;
+				}else{
+					$$.error=0;
+				}
+			}
+		}
+	}
 ;
 buscar : STRCHR PIZ expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tstring){
+					printf("\nError: linea %d: argumento 2, se encontro un tipo distinto de cadena", $5.linea);
+					$$.error=1;
+				}else{
+					$$.tipo=tint;
+					$$.error=0;
+				}
+			}
+		}
+	}
 ;
 extraer : STREXT PIZ expresion COMA expresion PDE
+	{
+		if(($3.error!=1)&&($5.error!=1))
+		{
+			if($3.tipo!=tstring){
+				printf("\nError: linea %d: argumento 1, se encontro un tipo distinto de cadena", $3.linea);
+				$$.error=1;
+			}else{
+				if($5.tipo!=tint){
+					printf("\nError: linea %d: argumento 2, se encontro un tipo distinto de entero", $5.linea);
+					$$.error=1;
+				}else{
+					$$.tipo=tstring;
+					$$.error=0;
+				}
+			}
+		}
+	}
 ;
-pila_mete : PUSH PIZ expresion COMA expresion PDE
+
+pila_mete : PUSH PIZ ID COMA expresion PDE
+	{
+		if($5.error!=1)
+		{
+			if(existeNodoScope(ts,$3.nombre)==-1)
+			{
+				$$.error=1;
+				$$.tipo=unknown;
+				printf("\nError: linea %d: La variable %s no esta definida en este bloque",  $3.linea, $3.nombre);
+			}else{
+				nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+				if($5.tipo!=nodoaux.tipopila)
+				{
+					$$.error=1;
+					$$.tipo=unknown;
+					printf("\nError: linea %d: La variable %s es de tipo no admitido por la pila", $5.linea, $5.nombre);
+				}else
+				{
+					$$.error=0;
+				}
+			}
+		}
+	}
 ;
-pila_saca : POP PIZ expresion PDE
+pila_saca : POP PIZ ID PDE
+	{
+		if(existeNodoScope(ts,$3.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $3.linea, $3.nombre);
+		}else{
+			nodoaux=ts.tabla[existeNodoScope(ts,$1.nombre)];
+			$$.error=0;
+			$$.tipo=nodoaux.tipopila;
+		}
+	}
 ;
-longitud_pila : SIZE PIZ expresion PDE
+longitud_pila : SIZE PIZ ID PDE
+	{
+		if(existeNodoScope(ts,$3.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $3.linea, $3.nombre);
+		}else{
+			$$.error=0;
+			$$.tipo=tint;
+		}
+	}
 ;
 pila_dest : DELETE PIZ ID PDE
+	{
+		if(existeNodoScope(ts,$3.nombre)==-1)
+		{
+			$$.error=1;
+			$$.tipo=unknown;
+			printf("\nError: linea %d: La variable %s no esta definida en este bloque", $3.linea, $3.nombre);
+		}else{
+			$$.error=0;
+		}
+	}
 ;
 %%
 /* Aqu� incluimos el fichero generado por el Flex, que implementa la funci�n yylex() */

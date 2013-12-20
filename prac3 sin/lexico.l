@@ -1,5 +1,5 @@
 %{ 
-/* Analizador de léxico */ 
+/* Analizador de lï¿½xico */ 
 #include <stdlib.h> 
 #include <stdio.h> 
 #define STDC 
@@ -62,7 +62,9 @@ todos .
 "&" return AMPER;
 "true" return TRUE;
 "false" return FALSE;
-{digito}+ return NUM; 
+"return" return RET;
+{digito}+ return NUM;
+{digito}*"."{digito}+ return REAL;
 {letra}{alphanum}* return ID; 
 \"(([^\n\"])|(\\\"))*\" return CAD;
 {letra}*"."h return LIB;

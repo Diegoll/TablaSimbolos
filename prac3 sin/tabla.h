@@ -51,3 +51,6 @@
 #define STACK 306
 #define BOOLEAN 307
 #define FLOAT 308
+#define RET 309
+#define CONSTANT 310
+#define REAL 311

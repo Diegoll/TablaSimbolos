@@ -6,8 +6,7 @@
  */
 
 #include <stdio.h>
-#include <stdlib.h> 
-#include "TablaSimbolos.h"
+#include <stdlib.h>
 
 #include "TablaSimbolos.h"
 
@@ -15,7 +14,7 @@
  * Funciones de los nodos
  */////////////////////////////////////////
 
-TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
+TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
 {
     TSNodo *n=(TSNodo *) malloc (sizeof(TSNodo));
     n->entrada=entrada;
@@ -23,8 +22,7 @@ TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int l
     n->tipo=Dato;
     n->num_param=parametros;
     n->linea=linea;
-    n->tipopila=tipopila;
-    n->error=0;
+    
     return *n;
 };
 
@@ -38,28 +36,9 @@ TDato getTipoDatoNodo(TSNodo n) {return n.tipo;};
 
 int getLineaNodo(TSNodo n) {return n.linea;};
 
+//char* getNombreTipoNodo(TSNodo n);
 
-char* getNombreTipoNodo(TSNodo n){
-    switch (n.entrada){
-        case marca: return "marca";
-        case funcion: return "funcion";
-        case variable: return "variable";
-        case tipo_person: return "tipo_person";
-        case parametro_formal: return "parametro_formal";
-    }
-}
-char* getNombreDatoNodo(TSNodo n){
-    switch(n.tipo){
-        case tstring: return "tstring";
-        case tint: return "tint";
-        case tchar: return "tchar";
-        case tfloat: return "tfloat";
-        case tboolean: return "tboolean";
-        case tstack: return "tstack";
-        case not_assigned: return "not_assigned";
-        case unknown: return "unknown";
-    }
-}
+//char* getNombreDatoNodo(TSNodo n);
 
 //char* getNombreTipoDatoNodo(TSNodo n);
 
@@ -77,8 +56,6 @@ int compararNodos(TSNodo n1, TSNodo n2)
 
 void asignarTipoDatoNodo(TSNodo *n, TDato tipo) {n->tipo=tipo;};
 
-void asignarTipoPilaNodo(TSNodo *n, TDato tipo) {n->tipopila=tipo;};
-
 //void incrementarNumParNodo(TSNodo *n);
 
 void borrarNodo(TSNodo *n){free(n);};
@@ -93,14 +70,6 @@ void mostrarNodo(TSNodo n)
 /*//////////////////////////////////////////////////7
  // Funciones de la tabla de simbolos
  */
-
-char* getNombreTipoDatoNodo(TSNodo n){
-
-}
-int main(int argc, char** argv) {
-    
-    return (EXIT_SUCCESS);
-}
 
 TablaSimbolos newTablaSimbolos()
 {
@@ -174,34 +143,6 @@ int existeNodo(TablaSimbolos TS, char *nombre)
     return -1;
 };
 
-int existeNodoScope(TablaSimbolos TS, char *nombre)
-{
-    //devolvia TSnodo pero venia muy mal. Ahora devuelve -1, o la posicion en la tabla simbolos
-    
-    int i, nohecho;
-    nohecho=1;
-    i=TS.tam_log-1;
-    
-    while((nohecho)&&(i>=0))
-    {
-        if(strcmp(TS.tabla[i].nombre, nombre)==0)
-        {
-            nohecho=0;
-            return i;
-        }
-        if(TS.tabla[i].entrada==marca){
-            nohecho=0;
-        }
-        i--;
-    }
-    return -1;
-};
-
-TSNodo getNodoi(TablaSimbolos *TS, int i)
-{
-    return TS->tabla[i];
-};
-
 void tsMete(TablaSimbolos *TS, TSNodo n, char *resultado)
 {
     //falta utilizar el argumento resultado que no se pa que sirve
@@ -239,55 +180,3 @@ void mostrarTabla(TablaSimbolos TS){
     }
     printf("Tam logico=%d", TS.tam_log);
 }
-
-int getTamTabla(TablaSimbolos TS){
-    return TS.tam;
-};
-
-TSNodo checkNombrexNodo(TablaSimbolos TS, char *nombre, int ncons, int nres){
-    TSNodo nodo=NULL;
-    int i=nres;
-    while(i<nres+ncons){
-        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
-            nodo=TS->tabla[i];
-        }
-        i++;
-    }
-    return nodo;
-};
-
-TSNodo chechDeclaracion(TablaSimbolos TS, char *nombre){
-    int i=TS->tam-1;
-    TSNodo nodo=NULL;
-
-    while(nodo==NULL && i>0){
-        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
-            nodo=TS->tabla[i];
-        }
-        i--;
-    }
-
-    return nodo;
-};
-
-TSNodo getNodoxPosicion(TablaSimbolos TS, int i){
-    return TS->tabla[i];
-};
-
-TSNodo setTipoDatoxPos(TablaSimbolos TS, int pos, enum TDato TDato, enum TDato TPila){
-    TS->tabla[pos]->TDato=TDato;
-    TS->tabla[pos]->TPila=TPila;
-};
-
-void deleteFuncionIncorrecta(TablaSimbolos *TS){
-    int tam=(*TS)->tam;
-    int nelim=(*TS)->tabla[(*TS)->tam]->num_param+1;
-    int topeaux=tam-nelim;
-
-    while(tope>topeaux){
-        deleteNodo(&((*TS)->tabla[tam]));
-        tam--;
-    }
-
-    (*TS)->tam=topeaux;
-};
