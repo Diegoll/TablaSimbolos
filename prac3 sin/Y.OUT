@@ -1,0 +1,4870 @@
+   0  $accept : prog $end
+
+   1  prog : dec1 dec2
+   2       | dec2
+
+   3  dec1 : incs defs
+   4       | incs
+   5       | defs
+
+   6  dec2 : tipos vars funcs main
+   7       | tipos vars main
+   8       | tipos funcs main
+   9       | vars funcs main
+  10       | tipos main
+  11       | vars main
+  12       | funcs main
+  13       | main
+
+  14  incs : incs inc
+  15       | inc
+
+  16  inc : INC MENOR LIB MAYOR
+
+  17  defs : defs def
+  18       | def
+
+  19  def : DEF ID expresion
+
+  20  tipos : TDEF tipo ID PYC
+
+  21  vars : vars var
+  22       | var
+
+  23  id_exp : ID ASI expresion
+  24         | ID
+
+  25  var : tipo id_exps PYC
+
+  26  id_exps : id_exps COMA id_exp
+  27          | id_exp
+
+  28  funcs : funcs func
+  29        | func
+
+  30  func : tipo ID PIZ PDE cuerpo
+  31       | tipo ID PIZ tipo ID PDE cuerpo
+
+  32  insts : insts inst
+  33        | inst
+
+  34  inst : leer
+  35       | escribir
+  36       | if
+  37       | while
+  38       | for
+  39       | expresion PYC
+
+  40  tipo : STRING
+  41       | INT
+  42       | CHAR
+
+  43  cuerpo : IB vars insts FB
+  44         | IB insts FB
+  45         | IB vars FB
+  46         | IB FB
+
+  47  asig : ID ASI expresion
+
+  48  expresion : expresion SUM expresion
+  49            | expresion RES expresion
+  50            | RES expresion
+  51            | expresion MUL expresion
+  52            | expresion DIV expresion
+  53            | expresion MAYOR expresion
+  54            | expresion MENOR expresion
+  55            | expresion MAYIGUAL expresion
+  56            | expresion MENIGUAL expresion
+  57            | expresion DISTINTO expresion
+  58            | expresion COMP expresion
+  59            | TRUE
+  60            | FALSE
+  61            | NUM
+  62            | llamada_funcion
+  63            | PIZ expresion PDE
+  64            | NOT expresion
+  65            | ID
+  66            | concatenar
+  67            | longitud
+  68            | comparar
+  69            | copiar
+  70            | concatenarn
+  71            | buscar
+  72            | extraer
+  73            | CAD
+  74            | incremento
+  75            | decremento
+  76            | asig
+
+  77  leer : SCANF PIZ variables PDE PYC
+
+  78  variables : variables COMA AMPER ID
+  79            | modificador
+
+  80  modificador : MODC
+  81              | MODD
+
+  82  escribir : PRINTF PIZ contenido PDE PYC
+
+  83  contenido : contenido COMA expresion
+  84            | CAD
+
+  85  if : IF PIZ expresion PDE bloque ELSE bloque
+  86     | IF PIZ expresion PDE bloque
+
+  87  while : WHILE PIZ expresion PDE bloque
+
+  88  for : FOR PIZ PYC PYC PDE bloque
+  89      | FOR PIZ expresiones PYC PYC PDE bloque
+  90      | FOR PIZ PYC expresion PYC PDE bloque
+  91      | FOR PIZ PYC PYC expresiones PDE bloque
+  92      | FOR PIZ expresiones PYC expresion PYC PDE bloque
+  93      | FOR PIZ expresiones PYC PYC expresiones PDE bloque
+  94      | FOR PIZ PYC expresion PYC expresiones PDE bloque
+  95      | FOR PIZ expresiones PYC expresion PYC expresiones PDE bloque
+
+  96  expresiones : expresiones COMA expresion
+  97              | expresion
+
+  98  incremento : ID INCRE
+  99             | INCRE ID
+
+ 100  decremento : ID DECRE
+ 101             | DECRE ID
+
+ 102  main : INT MAIN PIZ PDE cuerpo
+
+ 103  bloque : IB insts FB
+ 104         | inst
+ 105         | PYC
+
+ 106  llamada_funcion : ID PIZ PDE
+ 107                  | ID PIZ expresiones PDE
+
+ 108  concatenar : STRCAT PIZ expresion COMA expresion PDE
+
+ 109  concatenarn : STRNCAT PIZ expresion COMA expresion COMA expresion PDE
+
+ 110  longitud : STRLEN PIZ expresion PDE
+
+ 111  comparar : STRCMP PIZ expresion COMA expresion PDE
+
+ 112  copiar : STRCPY PIZ expresion COMA expresion PDE
+
+ 113  buscar : STRCHR PIZ expresion COMA expresion PDE
+
+ 114  extraer : STREXT PIZ expresion COMA expresion PDE
+
+state 0
+	$accept : . prog $end  (0)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	INC  shift 4
+	DEF  shift 5
+	TDEF  shift 6
+	.  error
+
+	prog  goto 7
+	dec1  goto 8
+	dec2  goto 9
+	incs  goto 10
+	defs  goto 11
+	tipos  goto 12
+	vars  goto 13
+	funcs  goto 14
+	main  goto 15
+	inc  goto 16
+	def  goto 17
+	tipo  goto 18
+	var  goto 19
+	func  goto 20
+
+
+state 1
+	tipo : INT .  (41)
+	main : INT . MAIN PIZ PDE cuerpo  (102)
+
+	MAIN  shift 21
+	ID  reduce 41
+
+
+state 2
+	tipo : CHAR .  (42)
+
+	.  reduce 42
+
+
+state 3
+	tipo : STRING .  (40)
+
+	.  reduce 40
+
+
+state 4
+	inc : INC . MENOR LIB MAYOR  (16)
+
+	MENOR  shift 22
+	.  error
+
+
+state 5
+	def : DEF . ID expresion  (19)
+
+	ID  shift 23
+	.  error
+
+
+state 6
+	tipos : TDEF . tipo ID PYC  (20)
+
+	INT  shift 24
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	tipo  goto 25
+
+
+state 7
+	$accept : prog . $end  (0)
+
+	$end  accept
+
+
+state 8
+	prog : dec1 . dec2  (1)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	TDEF  shift 6
+	.  error
+
+	dec2  goto 26
+	tipos  goto 12
+	vars  goto 13
+	funcs  goto 14
+	main  goto 15
+	tipo  goto 18
+	var  goto 19
+	func  goto 20
+
+
+state 9
+	prog : dec2 .  (2)
+
+	.  reduce 2
+
+
+state 10
+	dec1 : incs . defs  (3)
+	dec1 : incs .  (4)
+	incs : incs . inc  (14)
+
+	INC  shift 4
+	DEF  shift 5
+	INT  reduce 4
+	CHAR  reduce 4
+	STRING  reduce 4
+	TDEF  reduce 4
+
+	defs  goto 27
+	inc  goto 28
+	def  goto 17
+
+
+state 11
+	dec1 : defs .  (5)
+	defs : defs . def  (17)
+
+	DEF  shift 5
+	INT  reduce 5
+	CHAR  reduce 5
+	STRING  reduce 5
+	TDEF  reduce 5
+
+	def  goto 29
+
+
+state 12
+	dec2 : tipos . vars funcs main  (6)
+	dec2 : tipos . vars main  (7)
+	dec2 : tipos . funcs main  (8)
+	dec2 : tipos . main  (10)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	vars  goto 30
+	funcs  goto 31
+	main  goto 32
+	tipo  goto 18
+	var  goto 19
+	func  goto 20
+
+
+state 13
+	dec2 : vars . funcs main  (9)
+	dec2 : vars . main  (11)
+	vars : vars . var  (21)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	funcs  goto 33
+	main  goto 34
+	tipo  goto 18
+	var  goto 35
+	func  goto 20
+
+
+state 14
+	dec2 : funcs . main  (12)
+	funcs : funcs . func  (28)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	main  goto 36
+	tipo  goto 37
+	func  goto 38
+
+
+state 15
+	dec2 : main .  (13)
+
+	.  reduce 13
+
+
+state 16
+	incs : inc .  (15)
+
+	.  reduce 15
+
+
+state 17
+	defs : def .  (18)
+
+	.  reduce 18
+
+
+state 18
+	var : tipo . id_exps PYC  (25)
+	func : tipo . ID PIZ PDE cuerpo  (30)
+	func : tipo . ID PIZ tipo ID PDE cuerpo  (31)
+
+	ID  shift 39
+	.  error
+
+	id_exp  goto 40
+	id_exps  goto 41
+
+
+state 19
+	vars : var .  (22)
+
+	.  reduce 22
+
+
+state 20
+	funcs : func .  (29)
+
+	.  reduce 29
+
+
+state 21
+	main : INT MAIN . PIZ PDE cuerpo  (102)
+
+	PIZ  shift 42
+	.  error
+
+
+state 22
+	inc : INC MENOR . LIB MAYOR  (16)
+
+	LIB  shift 43
+	.  error
+
+
+state 23
+	def : DEF ID . expresion  (19)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 61
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 24
+	tipo : INT .  (41)
+
+	.  reduce 41
+
+
+state 25
+	tipos : TDEF tipo . ID PYC  (20)
+
+	ID  shift 73
+	.  error
+
+
+state 26
+	prog : dec1 dec2 .  (1)
+
+	.  reduce 1
+
+
+state 27
+	dec1 : incs defs .  (3)
+	defs : defs . def  (17)
+
+	DEF  shift 5
+	INT  reduce 3
+	CHAR  reduce 3
+	STRING  reduce 3
+	TDEF  reduce 3
+
+	def  goto 29
+
+
+state 28
+	incs : incs inc .  (14)
+
+	.  reduce 14
+
+
+state 29
+	defs : defs def .  (17)
+
+	.  reduce 17
+
+
+state 30
+	dec2 : tipos vars . funcs main  (6)
+	dec2 : tipos vars . main  (7)
+	vars : vars . var  (21)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	funcs  goto 74
+	main  goto 75
+	tipo  goto 18
+	var  goto 35
+	func  goto 20
+
+
+state 31
+	dec2 : tipos funcs . main  (8)
+	funcs : funcs . func  (28)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	main  goto 76
+	tipo  goto 37
+	func  goto 38
+
+
+state 32
+	dec2 : tipos main .  (10)
+
+	.  reduce 10
+
+
+state 33
+	dec2 : vars funcs . main  (9)
+	funcs : funcs . func  (28)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	main  goto 77
+	tipo  goto 37
+	func  goto 38
+
+
+state 34
+	dec2 : vars main .  (11)
+
+	.  reduce 11
+
+
+state 35
+	vars : vars var .  (21)
+
+	.  reduce 21
+
+
+state 36
+	dec2 : funcs main .  (12)
+
+	.  reduce 12
+
+
+state 37
+	func : tipo . ID PIZ PDE cuerpo  (30)
+	func : tipo . ID PIZ tipo ID PDE cuerpo  (31)
+
+	ID  shift 78
+	.  error
+
+
+state 38
+	funcs : funcs func .  (28)
+
+	.  reduce 28
+
+
+state 39
+	id_exp : ID . ASI expresion  (23)
+	id_exp : ID .  (24)
+	func : tipo ID . PIZ PDE cuerpo  (30)
+	func : tipo ID . PIZ tipo ID PDE cuerpo  (31)
+
+	ASI  shift 79
+	PIZ  shift 80
+	PYC  reduce 24
+	COMA  reduce 24
+
+
+state 40
+	id_exps : id_exp .  (27)
+
+	.  reduce 27
+
+
+state 41
+	var : tipo id_exps . PYC  (25)
+	id_exps : id_exps . COMA id_exp  (26)
+
+	PYC  shift 81
+	COMA  shift 82
+	.  error
+
+
+state 42
+	main : INT MAIN PIZ . PDE cuerpo  (102)
+
+	PDE  shift 83
+	.  error
+
+
+state 43
+	inc : INC MENOR LIB . MAYOR  (16)
+
+	MAYOR  shift 84
+	.  error
+
+
+state 44
+	asig : ID . ASI expresion  (47)
+	expresion : ID .  (65)
+	incremento : ID . INCRE  (98)
+	decremento : ID . DECRE  (100)
+	llamada_funcion : ID . PIZ PDE  (106)
+	llamada_funcion : ID . PIZ expresiones PDE  (107)
+
+	ASI  shift 85
+	PIZ  shift 86
+	INCRE  shift 87
+	DECRE  shift 88
+	PDE  reduce 65
+	PYC  reduce 65
+	INT  reduce 65
+	CHAR  reduce 65
+	STRING  reduce 65
+	DEF  reduce 65
+	TDEF  reduce 65
+	DISTINTO  reduce 65
+	MENIGUAL  reduce 65
+	MENOR  reduce 65
+	MAYIGUAL  reduce 65
+	MAYOR  reduce 65
+	COMP  reduce 65
+	COMA  reduce 65
+	SUM  reduce 65
+	RES  reduce 65
+	MUL  reduce 65
+	DIV  reduce 65
+
+
+state 45
+	expresion : NUM .  (61)
+
+	.  reduce 61
+
+
+state 46
+	expresion : PIZ . expresion PDE  (63)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 89
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 47
+	expresion : CAD .  (73)
+
+	.  reduce 73
+
+
+state 48
+	incremento : INCRE . ID  (99)
+
+	ID  shift 90
+	.  error
+
+
+state 49
+	decremento : DECRE . ID  (101)
+
+	ID  shift 91
+	.  error
+
+
+state 50
+	concatenar : STRCAT . PIZ expresion COMA expresion PDE  (108)
+
+	PIZ  shift 92
+	.  error
+
+
+state 51
+	concatenarn : STRNCAT . PIZ expresion COMA expresion COMA expresion PDE  (109)
+
+	PIZ  shift 93
+	.  error
+
+
+state 52
+	longitud : STRLEN . PIZ expresion PDE  (110)
+
+	PIZ  shift 94
+	.  error
+
+
+state 53
+	comparar : STRCMP . PIZ expresion COMA expresion PDE  (111)
+
+	PIZ  shift 95
+	.  error
+
+
+state 54
+	copiar : STRCPY . PIZ expresion COMA expresion PDE  (112)
+
+	PIZ  shift 96
+	.  error
+
+
+state 55
+	buscar : STRCHR . PIZ expresion COMA expresion PDE  (113)
+
+	PIZ  shift 97
+	.  error
+
+
+state 56
+	extraer : STREXT . PIZ expresion COMA expresion PDE  (114)
+
+	PIZ  shift 98
+	.  error
+
+
+state 57
+	expresion : TRUE .  (59)
+
+	.  reduce 59
+
+
+state 58
+	expresion : FALSE .  (60)
+
+	.  reduce 60
+
+
+state 59
+	expresion : NOT . expresion  (64)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 99
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 60
+	expresion : RES . expresion  (50)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 100
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 61
+	def : DEF ID expresion .  (19)
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	INT  reduce 19
+	CHAR  reduce 19
+	STRING  reduce 19
+	DEF  reduce 19
+	TDEF  reduce 19
+
+
+state 62
+	expresion : asig .  (76)
+
+	.  reduce 76
+
+
+state 63
+	expresion : llamada_funcion .  (62)
+
+	.  reduce 62
+
+
+state 64
+	expresion : concatenar .  (66)
+
+	.  reduce 66
+
+
+state 65
+	expresion : longitud .  (67)
+
+	.  reduce 67
+
+
+state 66
+	expresion : comparar .  (68)
+
+	.  reduce 68
+
+
+state 67
+	expresion : copiar .  (69)
+
+	.  reduce 69
+
+
+state 68
+	expresion : concatenarn .  (70)
+
+	.  reduce 70
+
+
+state 69
+	expresion : buscar .  (71)
+
+	.  reduce 71
+
+
+state 70
+	expresion : extraer .  (72)
+
+	.  reduce 72
+
+
+state 71
+	expresion : incremento .  (74)
+
+	.  reduce 74
+
+
+state 72
+	expresion : decremento .  (75)
+
+	.  reduce 75
+
+
+state 73
+	tipos : TDEF tipo ID . PYC  (20)
+
+	PYC  shift 111
+	.  error
+
+
+state 74
+	dec2 : tipos vars funcs . main  (6)
+	funcs : funcs . func  (28)
+
+	INT  shift 1
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	main  goto 112
+	tipo  goto 37
+	func  goto 38
+
+
+state 75
+	dec2 : tipos vars main .  (7)
+
+	.  reduce 7
+
+
+state 76
+	dec2 : tipos funcs main .  (8)
+
+	.  reduce 8
+
+
+state 77
+	dec2 : vars funcs main .  (9)
+
+	.  reduce 9
+
+
+state 78
+	func : tipo ID . PIZ PDE cuerpo  (30)
+	func : tipo ID . PIZ tipo ID PDE cuerpo  (31)
+
+	PIZ  shift 80
+	.  error
+
+
+state 79
+	id_exp : ID ASI . expresion  (23)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 113
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 80
+	func : tipo ID PIZ . PDE cuerpo  (30)
+	func : tipo ID PIZ . tipo ID PDE cuerpo  (31)
+
+	PDE  shift 114
+	INT  shift 24
+	CHAR  shift 2
+	STRING  shift 3
+	.  error
+
+	tipo  goto 115
+
+
+state 81
+	var : tipo id_exps PYC .  (25)
+
+	.  reduce 25
+
+
+state 82
+	id_exps : id_exps COMA . id_exp  (26)
+
+	ID  shift 116
+	.  error
+
+	id_exp  goto 117
+
+
+state 83
+	main : INT MAIN PIZ PDE . cuerpo  (102)
+
+	IB  shift 118
+	.  error
+
+	cuerpo  goto 119
+
+
+state 84
+	inc : INC MENOR LIB MAYOR .  (16)
+
+	.  reduce 16
+
+
+state 85
+	asig : ID ASI . expresion  (47)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 120
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 86
+	llamada_funcion : ID PIZ . PDE  (106)
+	llamada_funcion : ID PIZ . expresiones PDE  (107)
+
+	PDE  shift 121
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 123
+
+
+state 87
+	incremento : ID INCRE .  (98)
+
+	.  reduce 98
+
+
+state 88
+	decremento : ID DECRE .  (100)
+
+	.  reduce 100
+
+
+state 89
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	expresion : PIZ expresion . PDE  (63)
+
+	PDE  shift 124
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 90
+	incremento : INCRE ID .  (99)
+
+	.  reduce 99
+
+
+state 91
+	decremento : DECRE ID .  (101)
+
+	.  reduce 101
+
+
+state 92
+	concatenar : STRCAT PIZ . expresion COMA expresion PDE  (108)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 125
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 93
+	concatenarn : STRNCAT PIZ . expresion COMA expresion COMA expresion PDE  (109)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 126
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 94
+	longitud : STRLEN PIZ . expresion PDE  (110)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 127
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 95
+	comparar : STRCMP PIZ . expresion COMA expresion PDE  (111)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 128
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 96
+	copiar : STRCPY PIZ . expresion COMA expresion PDE  (112)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 129
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 97
+	buscar : STRCHR PIZ . expresion COMA expresion PDE  (113)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 130
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 98
+	extraer : STREXT PIZ . expresion COMA expresion PDE  (114)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 131
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 99
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	expresion : NOT expresion .  (64)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 64
+	PYC  reduce 64
+	INT  reduce 64
+	CHAR  reduce 64
+	STRING  reduce 64
+	DEF  reduce 64
+	TDEF  reduce 64
+	DISTINTO  reduce 64
+	MENIGUAL  reduce 64
+	MENOR  reduce 64
+	MAYIGUAL  reduce 64
+	MAYOR  reduce 64
+	COMP  reduce 64
+	COMA  reduce 64
+
+
+state 100
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : RES expresion .  (50)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	.  reduce 50
+
+
+state 101
+	expresion : expresion DISTINTO . expresion  (57)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 132
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 102
+	expresion : expresion MENIGUAL . expresion  (56)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 133
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 103
+	expresion : expresion MENOR . expresion  (54)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 134
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 104
+	expresion : expresion MAYIGUAL . expresion  (55)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 135
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 105
+	expresion : expresion MAYOR . expresion  (53)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 136
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 106
+	expresion : expresion COMP . expresion  (58)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 137
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 107
+	expresion : expresion SUM . expresion  (48)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 138
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 108
+	expresion : expresion RES . expresion  (49)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 139
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 109
+	expresion : expresion MUL . expresion  (51)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 140
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 110
+	expresion : expresion DIV . expresion  (52)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 141
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 111
+	tipos : TDEF tipo ID PYC .  (20)
+
+	.  reduce 20
+
+
+state 112
+	dec2 : tipos vars funcs main .  (6)
+
+	.  reduce 6
+
+
+state 113
+	id_exp : ID ASI expresion .  (23)
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PYC  reduce 23
+	COMA  reduce 23
+
+
+state 114
+	func : tipo ID PIZ PDE . cuerpo  (30)
+
+	IB  shift 118
+	.  error
+
+	cuerpo  goto 142
+
+
+state 115
+	func : tipo ID PIZ tipo . ID PDE cuerpo  (31)
+
+	ID  shift 143
+	.  error
+
+
+state 116
+	id_exp : ID . ASI expresion  (23)
+	id_exp : ID .  (24)
+
+	ASI  shift 79
+	PYC  reduce 24
+	COMA  reduce 24
+
+
+state 117
+	id_exps : id_exps COMA id_exp .  (26)
+
+	.  reduce 26
+
+
+state 118
+	cuerpo : IB . vars insts FB  (43)
+	cuerpo : IB . insts FB  (44)
+	cuerpo : IB . vars FB  (45)
+	cuerpo : IB . FB  (46)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	INT  shift 24
+	CHAR  shift 2
+	STRING  shift 3
+	FB  shift 147
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	vars  goto 150
+	expresion  goto 151
+	tipo  goto 152
+	var  goto 19
+	insts  goto 153
+	inst  goto 154
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 119
+	main : INT MAIN PIZ PDE cuerpo .  (102)
+
+	.  reduce 102
+
+
+state 120
+	asig : ID ASI expresion .  (47)
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 47
+	PYC  reduce 47
+	INT  reduce 47
+	CHAR  reduce 47
+	STRING  reduce 47
+	DEF  reduce 47
+	TDEF  reduce 47
+	DISTINTO  reduce 47
+	MENIGUAL  reduce 47
+	MENOR  reduce 47
+	MAYIGUAL  reduce 47
+	MAYOR  reduce 47
+	COMP  reduce 47
+	COMA  reduce 47
+
+
+state 121
+	llamada_funcion : ID PIZ PDE .  (106)
+
+	.  reduce 106
+
+
+state 122
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	expresiones : expresion .  (97)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 97
+	PYC  reduce 97
+	COMA  reduce 97
+
+
+state 123
+	expresiones : expresiones . COMA expresion  (96)
+	llamada_funcion : ID PIZ expresiones . PDE  (107)
+
+	PDE  shift 160
+	COMA  shift 161
+	.  error
+
+
+state 124
+	expresion : PIZ expresion PDE .  (63)
+
+	.  reduce 63
+
+
+state 125
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	concatenar : STRCAT PIZ expresion . COMA expresion PDE  (108)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 162
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 126
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	concatenarn : STRNCAT PIZ expresion . COMA expresion COMA expresion PDE  (109)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 163
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 127
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	longitud : STRLEN PIZ expresion . PDE  (110)
+
+	PDE  shift 164
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 128
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	comparar : STRCMP PIZ expresion . COMA expresion PDE  (111)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 165
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 129
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	copiar : STRCPY PIZ expresion . COMA expresion PDE  (112)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 166
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 130
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	buscar : STRCHR PIZ expresion . COMA expresion PDE  (113)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 167
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 131
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	extraer : STREXT PIZ expresion . COMA expresion PDE  (114)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 168
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 132
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion DISTINTO expresion .  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 57
+	PYC  reduce 57
+	INT  reduce 57
+	CHAR  reduce 57
+	STRING  reduce 57
+	DEF  reduce 57
+	TDEF  reduce 57
+	DISTINTO  reduce 57
+	MENIGUAL  reduce 57
+	MENOR  reduce 57
+	MAYIGUAL  reduce 57
+	MAYOR  reduce 57
+	COMP  reduce 57
+	COMA  reduce 57
+
+
+state 133
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion MENIGUAL expresion .  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 56
+	PYC  reduce 56
+	INT  reduce 56
+	CHAR  reduce 56
+	STRING  reduce 56
+	DEF  reduce 56
+	TDEF  reduce 56
+	DISTINTO  reduce 56
+	MENIGUAL  reduce 56
+	MENOR  reduce 56
+	MAYIGUAL  reduce 56
+	MAYOR  reduce 56
+	COMP  reduce 56
+	COMA  reduce 56
+
+
+state 134
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion MENOR expresion .  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 54
+	PYC  reduce 54
+	INT  reduce 54
+	CHAR  reduce 54
+	STRING  reduce 54
+	DEF  reduce 54
+	TDEF  reduce 54
+	DISTINTO  reduce 54
+	MENIGUAL  reduce 54
+	MENOR  reduce 54
+	MAYIGUAL  reduce 54
+	MAYOR  reduce 54
+	COMP  reduce 54
+	COMA  reduce 54
+
+
+state 135
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion MAYIGUAL expresion .  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 55
+	PYC  reduce 55
+	INT  reduce 55
+	CHAR  reduce 55
+	STRING  reduce 55
+	DEF  reduce 55
+	TDEF  reduce 55
+	DISTINTO  reduce 55
+	MENIGUAL  reduce 55
+	MENOR  reduce 55
+	MAYIGUAL  reduce 55
+	MAYOR  reduce 55
+	COMP  reduce 55
+	COMA  reduce 55
+
+
+state 136
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion MAYOR expresion .  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 53
+	PYC  reduce 53
+	INT  reduce 53
+	CHAR  reduce 53
+	STRING  reduce 53
+	DEF  reduce 53
+	TDEF  reduce 53
+	DISTINTO  reduce 53
+	MENIGUAL  reduce 53
+	MENOR  reduce 53
+	MAYIGUAL  reduce 53
+	MAYOR  reduce 53
+	COMP  reduce 53
+	COMA  reduce 53
+
+
+state 137
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	expresion : expresion COMP expresion .  (58)
+
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 58
+	PYC  reduce 58
+	INT  reduce 58
+	CHAR  reduce 58
+	STRING  reduce 58
+	DEF  reduce 58
+	TDEF  reduce 58
+	DISTINTO  reduce 58
+	MENIGUAL  reduce 58
+	MENOR  reduce 58
+	MAYIGUAL  reduce 58
+	MAYOR  reduce 58
+	COMP  reduce 58
+	COMA  reduce 58
+
+
+state 138
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion SUM expresion .  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 48
+	PYC  reduce 48
+	INT  reduce 48
+	CHAR  reduce 48
+	STRING  reduce 48
+	DEF  reduce 48
+	TDEF  reduce 48
+	DISTINTO  reduce 48
+	MENIGUAL  reduce 48
+	MENOR  reduce 48
+	MAYIGUAL  reduce 48
+	MAYOR  reduce 48
+	COMP  reduce 48
+	COMA  reduce 48
+	SUM  reduce 48
+	RES  reduce 48
+
+
+state 139
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion RES expresion .  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 49
+	PYC  reduce 49
+	INT  reduce 49
+	CHAR  reduce 49
+	STRING  reduce 49
+	DEF  reduce 49
+	TDEF  reduce 49
+	DISTINTO  reduce 49
+	MENIGUAL  reduce 49
+	MENOR  reduce 49
+	MAYIGUAL  reduce 49
+	MAYOR  reduce 49
+	COMP  reduce 49
+	COMA  reduce 49
+	SUM  reduce 49
+	RES  reduce 49
+
+
+state 140
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion MUL expresion .  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	.  reduce 51
+
+
+state 141
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion DIV expresion .  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	.  reduce 52
+
+
+state 142
+	func : tipo ID PIZ PDE cuerpo .  (30)
+
+	.  reduce 30
+
+
+state 143
+	func : tipo ID PIZ tipo ID . PDE cuerpo  (31)
+
+	PDE  shift 169
+	.  error
+
+
+state 144
+	for : FOR . PIZ PYC PYC PDE bloque  (88)
+	for : FOR . PIZ expresiones PYC PYC PDE bloque  (89)
+	for : FOR . PIZ PYC expresion PYC PDE bloque  (90)
+	for : FOR . PIZ PYC PYC expresiones PDE bloque  (91)
+	for : FOR . PIZ expresiones PYC expresion PYC PDE bloque  (92)
+	for : FOR . PIZ expresiones PYC PYC expresiones PDE bloque  (93)
+	for : FOR . PIZ PYC expresion PYC expresiones PDE bloque  (94)
+	for : FOR . PIZ expresiones PYC expresion PYC expresiones PDE bloque  (95)
+
+	PIZ  shift 170
+	.  error
+
+
+state 145
+	if : IF . PIZ expresion PDE bloque ELSE bloque  (85)
+	if : IF . PIZ expresion PDE bloque  (86)
+
+	PIZ  shift 171
+	.  error
+
+
+state 146
+	while : WHILE . PIZ expresion PDE bloque  (87)
+
+	PIZ  shift 172
+	.  error
+
+
+state 147
+	cuerpo : IB FB .  (46)
+
+	.  reduce 46
+
+
+state 148
+	escribir : PRINTF . PIZ contenido PDE PYC  (82)
+
+	PIZ  shift 173
+	.  error
+
+
+state 149
+	leer : SCANF . PIZ variables PDE PYC  (77)
+
+	PIZ  shift 174
+	.  error
+
+
+state 150
+	vars : vars . var  (21)
+	cuerpo : IB vars . insts FB  (43)
+	cuerpo : IB vars . FB  (45)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	INT  shift 24
+	CHAR  shift 2
+	STRING  shift 3
+	FB  shift 175
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	tipo  goto 152
+	var  goto 35
+	insts  goto 176
+	inst  goto 154
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 151
+	inst : expresion . PYC  (39)
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+
+	PYC  shift 177
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 152
+	var : tipo . id_exps PYC  (25)
+
+	ID  shift 116
+	.  error
+
+	id_exp  goto 40
+	id_exps  goto 41
+
+
+state 153
+	insts : insts . inst  (32)
+	cuerpo : IB insts . FB  (44)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	FB  shift 178
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 179
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 154
+	insts : inst .  (33)
+
+	.  reduce 33
+
+
+state 155
+	inst : leer .  (34)
+
+	.  reduce 34
+
+
+state 156
+	inst : escribir .  (35)
+
+	.  reduce 35
+
+
+state 157
+	inst : if .  (36)
+
+	.  reduce 36
+
+
+state 158
+	inst : while .  (37)
+
+	.  reduce 37
+
+
+state 159
+	inst : for .  (38)
+
+	.  reduce 38
+
+
+state 160
+	llamada_funcion : ID PIZ expresiones PDE .  (107)
+
+	.  reduce 107
+
+
+state 161
+	expresiones : expresiones COMA . expresion  (96)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 180
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 162
+	concatenar : STRCAT PIZ expresion COMA . expresion PDE  (108)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 181
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 163
+	concatenarn : STRNCAT PIZ expresion COMA . expresion COMA expresion PDE  (109)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 182
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 164
+	longitud : STRLEN PIZ expresion PDE .  (110)
+
+	.  reduce 110
+
+
+state 165
+	comparar : STRCMP PIZ expresion COMA . expresion PDE  (111)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 183
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 166
+	copiar : STRCPY PIZ expresion COMA . expresion PDE  (112)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 184
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 167
+	buscar : STRCHR PIZ expresion COMA . expresion PDE  (113)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 185
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 168
+	extraer : STREXT PIZ expresion COMA . expresion PDE  (114)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 186
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 169
+	func : tipo ID PIZ tipo ID PDE . cuerpo  (31)
+
+	IB  shift 118
+	.  error
+
+	cuerpo  goto 187
+
+
+state 170
+	for : FOR PIZ . PYC PYC PDE bloque  (88)
+	for : FOR PIZ . expresiones PYC PYC PDE bloque  (89)
+	for : FOR PIZ . PYC expresion PYC PDE bloque  (90)
+	for : FOR PIZ . PYC PYC expresiones PDE bloque  (91)
+	for : FOR PIZ . expresiones PYC expresion PYC PDE bloque  (92)
+	for : FOR PIZ . expresiones PYC PYC expresiones PDE bloque  (93)
+	for : FOR PIZ . PYC expresion PYC expresiones PDE bloque  (94)
+	for : FOR PIZ . expresiones PYC expresion PYC expresiones PDE bloque  (95)
+
+	PYC  shift 188
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 189
+
+
+state 171
+	if : IF PIZ . expresion PDE bloque ELSE bloque  (85)
+	if : IF PIZ . expresion PDE bloque  (86)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 190
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 172
+	while : WHILE PIZ . expresion PDE bloque  (87)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 191
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 173
+	escribir : PRINTF PIZ . contenido PDE PYC  (82)
+
+	CAD  shift 192
+	.  error
+
+	contenido  goto 193
+
+
+state 174
+	leer : SCANF PIZ . variables PDE PYC  (77)
+
+	MODC  shift 194
+	MODD  shift 195
+	.  error
+
+	variables  goto 196
+	modificador  goto 197
+
+
+state 175
+	cuerpo : IB vars FB .  (45)
+
+	.  reduce 45
+
+
+state 176
+	insts : insts . inst  (32)
+	cuerpo : IB vars insts . FB  (43)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	FB  shift 198
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 179
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 177
+	inst : expresion PYC .  (39)
+
+	.  reduce 39
+
+
+state 178
+	cuerpo : IB insts FB .  (44)
+
+	.  reduce 44
+
+
+state 179
+	insts : insts inst .  (32)
+
+	.  reduce 32
+
+
+state 180
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	expresiones : expresiones COMA expresion .  (96)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 96
+	PYC  reduce 96
+	COMA  reduce 96
+
+
+state 181
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	concatenar : STRCAT PIZ expresion COMA expresion . PDE  (108)
+
+	PDE  shift 199
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 182
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	concatenarn : STRNCAT PIZ expresion COMA expresion . COMA expresion PDE  (109)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	COMA  shift 200
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 183
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	comparar : STRCMP PIZ expresion COMA expresion . PDE  (111)
+
+	PDE  shift 201
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 184
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	copiar : STRCPY PIZ expresion COMA expresion . PDE  (112)
+
+	PDE  shift 202
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 185
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	buscar : STRCHR PIZ expresion COMA expresion . PDE  (113)
+
+	PDE  shift 203
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 186
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	extraer : STREXT PIZ expresion COMA expresion . PDE  (114)
+
+	PDE  shift 204
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 187
+	func : tipo ID PIZ tipo ID PDE cuerpo .  (31)
+
+	.  reduce 31
+
+
+state 188
+	for : FOR PIZ PYC . PYC PDE bloque  (88)
+	for : FOR PIZ PYC . expresion PYC PDE bloque  (90)
+	for : FOR PIZ PYC . PYC expresiones PDE bloque  (91)
+	for : FOR PIZ PYC . expresion PYC expresiones PDE bloque  (94)
+
+	PYC  shift 205
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 206
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 189
+	for : FOR PIZ expresiones . PYC PYC PDE bloque  (89)
+	for : FOR PIZ expresiones . PYC expresion PYC PDE bloque  (92)
+	for : FOR PIZ expresiones . PYC PYC expresiones PDE bloque  (93)
+	for : FOR PIZ expresiones . PYC expresion PYC expresiones PDE bloque  (95)
+	expresiones : expresiones . COMA expresion  (96)
+
+	PYC  shift 207
+	COMA  shift 161
+	.  error
+
+
+state 190
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	if : IF PIZ expresion . PDE bloque ELSE bloque  (85)
+	if : IF PIZ expresion . PDE bloque  (86)
+
+	PDE  shift 208
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 191
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	while : WHILE PIZ expresion . PDE bloque  (87)
+
+	PDE  shift 209
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 192
+	contenido : CAD .  (84)
+
+	.  reduce 84
+
+
+state 193
+	escribir : PRINTF PIZ contenido . PDE PYC  (82)
+	contenido : contenido . COMA expresion  (83)
+
+	PDE  shift 210
+	COMA  shift 211
+	.  error
+
+
+state 194
+	modificador : MODC .  (80)
+
+	.  reduce 80
+
+
+state 195
+	modificador : MODD .  (81)
+
+	.  reduce 81
+
+
+state 196
+	leer : SCANF PIZ variables . PDE PYC  (77)
+	variables : variables . COMA AMPER ID  (78)
+
+	PDE  shift 212
+	COMA  shift 213
+	.  error
+
+
+state 197
+	variables : modificador .  (79)
+
+	.  reduce 79
+
+
+state 198
+	cuerpo : IB vars insts FB .  (43)
+
+	.  reduce 43
+
+
+state 199
+	concatenar : STRCAT PIZ expresion COMA expresion PDE .  (108)
+
+	.  reduce 108
+
+
+state 200
+	concatenarn : STRNCAT PIZ expresion COMA expresion COMA . expresion PDE  (109)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 214
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 201
+	comparar : STRCMP PIZ expresion COMA expresion PDE .  (111)
+
+	.  reduce 111
+
+
+state 202
+	copiar : STRCPY PIZ expresion COMA expresion PDE .  (112)
+
+	.  reduce 112
+
+
+state 203
+	buscar : STRCHR PIZ expresion COMA expresion PDE .  (113)
+
+	.  reduce 113
+
+
+state 204
+	extraer : STREXT PIZ expresion COMA expresion PDE .  (114)
+
+	.  reduce 114
+
+
+state 205
+	for : FOR PIZ PYC PYC . PDE bloque  (88)
+	for : FOR PIZ PYC PYC . expresiones PDE bloque  (91)
+
+	PDE  shift 215
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 216
+
+
+state 206
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	for : FOR PIZ PYC expresion . PYC PDE bloque  (90)
+	for : FOR PIZ PYC expresion . PYC expresiones PDE bloque  (94)
+
+	PYC  shift 217
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 207
+	for : FOR PIZ expresiones PYC . PYC PDE bloque  (89)
+	for : FOR PIZ expresiones PYC . expresion PYC PDE bloque  (92)
+	for : FOR PIZ expresiones PYC . PYC expresiones PDE bloque  (93)
+	for : FOR PIZ expresiones PYC . expresion PYC expresiones PDE bloque  (95)
+
+	PYC  shift 218
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 219
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 208
+	if : IF PIZ expresion PDE . bloque ELSE bloque  (85)
+	if : IF PIZ expresion PDE . bloque  (86)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 223
+
+
+state 209
+	while : WHILE PIZ expresion PDE . bloque  (87)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 224
+
+
+state 210
+	escribir : PRINTF PIZ contenido PDE . PYC  (82)
+
+	PYC  shift 225
+	.  error
+
+
+state 211
+	contenido : contenido COMA . expresion  (83)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 226
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 212
+	leer : SCANF PIZ variables PDE . PYC  (77)
+
+	PYC  shift 227
+	.  error
+
+
+state 213
+	variables : variables COMA . AMPER ID  (78)
+
+	AMPER  shift 228
+	.  error
+
+
+state 214
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	concatenarn : STRNCAT PIZ expresion COMA expresion COMA expresion . PDE  (109)
+
+	PDE  shift 229
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 215
+	for : FOR PIZ PYC PYC PDE . bloque  (88)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 230
+
+
+state 216
+	for : FOR PIZ PYC PYC expresiones . PDE bloque  (91)
+	expresiones : expresiones . COMA expresion  (96)
+
+	PDE  shift 231
+	COMA  shift 161
+	.  error
+
+
+state 217
+	for : FOR PIZ PYC expresion PYC . PDE bloque  (90)
+	for : FOR PIZ PYC expresion PYC . expresiones PDE bloque  (94)
+
+	PDE  shift 232
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 233
+
+
+state 218
+	for : FOR PIZ expresiones PYC PYC . PDE bloque  (89)
+	for : FOR PIZ expresiones PYC PYC . expresiones PDE bloque  (93)
+
+	PDE  shift 234
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 235
+
+
+state 219
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	for : FOR PIZ expresiones PYC expresion . PYC PDE bloque  (92)
+	for : FOR PIZ expresiones PYC expresion . PYC expresiones PDE bloque  (95)
+
+	PYC  shift 236
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	.  error
+
+
+state 220
+	bloque : PYC .  (105)
+
+	.  reduce 105
+
+
+state 221
+	bloque : IB . insts FB  (103)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	insts  goto 237
+	inst  goto 154
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 222
+	bloque : inst .  (104)
+
+	.  reduce 104
+
+
+223: shift/reduce conflict (shift 238, reduce 86) on ELSE
+state 223
+	if : IF PIZ expresion PDE bloque . ELSE bloque  (85)
+	if : IF PIZ expresion PDE bloque .  (86)
+
+	ELSE  shift 238
+	ID  reduce 86
+	NUM  reduce 86
+	PIZ  reduce 86
+	CAD  reduce 86
+	FOR  reduce 86
+	IF  reduce 86
+	WHILE  reduce 86
+	FB  reduce 86
+	INCRE  reduce 86
+	DECRE  reduce 86
+	PRINTF  reduce 86
+	SCANF  reduce 86
+	STRCAT  reduce 86
+	STRNCAT  reduce 86
+	STRLEN  reduce 86
+	STRCMP  reduce 86
+	STRCPY  reduce 86
+	STRCHR  reduce 86
+	STREXT  reduce 86
+	TRUE  reduce 86
+	FALSE  reduce 86
+	NOT  reduce 86
+	RES  reduce 86
+
+
+state 224
+	while : WHILE PIZ expresion PDE bloque .  (87)
+
+	.  reduce 87
+
+
+state 225
+	escribir : PRINTF PIZ contenido PDE PYC .  (82)
+
+	.  reduce 82
+
+
+state 226
+	expresion : expresion . SUM expresion  (48)
+	expresion : expresion . RES expresion  (49)
+	expresion : expresion . MUL expresion  (51)
+	expresion : expresion . DIV expresion  (52)
+	expresion : expresion . MAYOR expresion  (53)
+	expresion : expresion . MENOR expresion  (54)
+	expresion : expresion . MAYIGUAL expresion  (55)
+	expresion : expresion . MENIGUAL expresion  (56)
+	expresion : expresion . DISTINTO expresion  (57)
+	expresion : expresion . COMP expresion  (58)
+	contenido : contenido COMA expresion .  (83)
+
+	DISTINTO  shift 101
+	MENIGUAL  shift 102
+	MENOR  shift 103
+	MAYIGUAL  shift 104
+	MAYOR  shift 105
+	COMP  shift 106
+	SUM  shift 107
+	RES  shift 108
+	MUL  shift 109
+	DIV  shift 110
+	PDE  reduce 83
+	COMA  reduce 83
+
+
+state 227
+	leer : SCANF PIZ variables PDE PYC .  (77)
+
+	.  reduce 77
+
+
+state 228
+	variables : variables COMA AMPER . ID  (78)
+
+	ID  shift 239
+	.  error
+
+
+state 229
+	concatenarn : STRNCAT PIZ expresion COMA expresion COMA expresion PDE .  (109)
+
+	.  reduce 109
+
+
+state 230
+	for : FOR PIZ PYC PYC PDE bloque .  (88)
+
+	.  reduce 88
+
+
+state 231
+	for : FOR PIZ PYC PYC expresiones PDE . bloque  (91)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 240
+
+
+state 232
+	for : FOR PIZ PYC expresion PYC PDE . bloque  (90)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 241
+
+
+state 233
+	for : FOR PIZ PYC expresion PYC expresiones . PDE bloque  (94)
+	expresiones : expresiones . COMA expresion  (96)
+
+	PDE  shift 242
+	COMA  shift 161
+	.  error
+
+
+state 234
+	for : FOR PIZ expresiones PYC PYC PDE . bloque  (89)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 243
+
+
+state 235
+	for : FOR PIZ expresiones PYC PYC expresiones . PDE bloque  (93)
+	expresiones : expresiones . COMA expresion  (96)
+
+	PDE  shift 244
+	COMA  shift 161
+	.  error
+
+
+state 236
+	for : FOR PIZ expresiones PYC expresion PYC . PDE bloque  (92)
+	for : FOR PIZ expresiones PYC expresion PYC . expresiones PDE bloque  (95)
+
+	PDE  shift 245
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	INCRE  shift 48
+	DECRE  shift 49
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 122
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	expresiones  goto 246
+
+
+state 237
+	insts : insts . inst  (32)
+	bloque : IB insts . FB  (103)
+
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	FB  shift 247
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 179
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+
+
+state 238
+	if : IF PIZ expresion PDE bloque ELSE . bloque  (85)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 248
+
+
+state 239
+	variables : variables COMA AMPER ID .  (78)
+
+	.  reduce 78
+
+
+state 240
+	for : FOR PIZ PYC PYC expresiones PDE bloque .  (91)
+
+	.  reduce 91
+
+
+state 241
+	for : FOR PIZ PYC expresion PYC PDE bloque .  (90)
+
+	.  reduce 90
+
+
+state 242
+	for : FOR PIZ PYC expresion PYC expresiones PDE . bloque  (94)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 249
+
+
+state 243
+	for : FOR PIZ expresiones PYC PYC PDE bloque .  (89)
+
+	.  reduce 89
+
+
+state 244
+	for : FOR PIZ expresiones PYC PYC expresiones PDE . bloque  (93)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 250
+
+
+state 245
+	for : FOR PIZ expresiones PYC expresion PYC PDE . bloque  (92)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 251
+
+
+state 246
+	for : FOR PIZ expresiones PYC expresion PYC expresiones . PDE bloque  (95)
+	expresiones : expresiones . COMA expresion  (96)
+
+	PDE  shift 252
+	COMA  shift 161
+	.  error
+
+
+state 247
+	bloque : IB insts FB .  (103)
+
+	.  reduce 103
+
+
+state 248
+	if : IF PIZ expresion PDE bloque ELSE bloque .  (85)
+
+	.  reduce 85
+
+
+state 249
+	for : FOR PIZ PYC expresion PYC expresiones PDE bloque .  (94)
+
+	.  reduce 94
+
+
+state 250
+	for : FOR PIZ expresiones PYC PYC expresiones PDE bloque .  (93)
+
+	.  reduce 93
+
+
+state 251
+	for : FOR PIZ expresiones PYC expresion PYC PDE bloque .  (92)
+
+	.  reduce 92
+
+
+state 252
+	for : FOR PIZ expresiones PYC expresion PYC expresiones PDE . bloque  (95)
+
+	PYC  shift 220
+	ID  shift 44
+	NUM  shift 45
+	PIZ  shift 46
+	CAD  shift 47
+	FOR  shift 144
+	IF  shift 145
+	WHILE  shift 146
+	IB  shift 221
+	INCRE  shift 48
+	DECRE  shift 49
+	PRINTF  shift 148
+	SCANF  shift 149
+	STRCAT  shift 50
+	STRNCAT  shift 51
+	STRLEN  shift 52
+	STRCMP  shift 53
+	STRCPY  shift 54
+	STRCHR  shift 55
+	STREXT  shift 56
+	TRUE  shift 57
+	FALSE  shift 58
+	NOT  shift 59
+	RES  shift 60
+	.  error
+
+	expresion  goto 151
+	inst  goto 222
+	leer  goto 155
+	escribir  goto 156
+	if  goto 157
+	while  goto 158
+	for  goto 159
+	asig  goto 62
+	llamada_funcion  goto 63
+	concatenar  goto 64
+	longitud  goto 65
+	comparar  goto 66
+	copiar  goto 67
+	concatenarn  goto 68
+	buscar  goto 69
+	extraer  goto 70
+	incremento  goto 71
+	decremento  goto 72
+	bloque  goto 253
+
+
+state 253
+	for : FOR PIZ expresiones PYC expresion PYC expresiones PDE bloque .  (95)
+
+	.  reduce 95
+
+
+State 223 contains 1 shift/reduce conflict.
+
+
+55 terminals, 42 nonterminals
+115 grammar rules, 254 states

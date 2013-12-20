@@ -37,9 +37,28 @@ TDato getTipoDatoNodo(TSNodo n) {return n.tipo;};
 
 int getLineaNodo(TSNodo n) {return n.linea;};
 
-//char* getNombreTipoNodo(TSNodo n);
 
-//char* getNombreDatoNodo(TSNodo n);
+char* getNombreTipoNodo(TSNodo n){
+    switch (n.entrada){
+        case marca: return "marca";
+        case funcion: return "funcion";
+        case variable: return "variable";
+        case tipo_person: return "tipo_person";
+        case parametro_formal: return "parametro_formal";
+    }
+}
+char* getNombreDatoNodo(TSNodo n){
+    switch(n.tipo){
+        case tstring: return "tstring";
+        case tint: return "tint";
+        case tchar: return "tchar";
+        case tfloat: return "tfloat";
+        case tboolean: return "tboolean";
+        case tstack: return "tstack";
+        case not_assigned: return "not_assigned";
+        case unknown: return "unknown";
+    }
+}
 
 //char* getNombreTipoDatoNodo(TSNodo n);
 
@@ -72,27 +91,6 @@ void mostrarNodo(TSNodo n)
  // Funciones de la tabla de simbolos
  */
 
-char* getNombreTipoNodo(TSNodo n){
-    switch (n->entrada){
-        case marca: return "marca";
-        case funcion: return "funcion";
-        case variable: return "variable";
-        case tipo_person: return "tipo_person";
-        case parametro_formal: return "parametro_formal";
-    }
-}
-char* getNombreDatoNodo(TSNodo n){
-    switch(n->tipo){
-        case tstring: return "tstring";
-        case tint: return "tint";
-        case tchar: return "tchar";
-        case tfloat: return "tfloat";
-        case tboolean: return "tboolean";
-        case tstack: return "tstack";
-        case not_assigned: return "not_assigned";
-        case unknown: return "unknown";
-    }
-}
 char* getNombreTipoDatoNodo(TSNodo n){
 
 }
