@@ -1,0 +1,21 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobacion de que el operador es compatible con el tipo de subexpresiones con las que actua
+//variables no definidas
+
+int main(){
+    char a,b;
+    int c;
+    
+    printf("Introduzca valor número 1:");
+    scanf("%d",&a);
+    printf("Introduzca valor número 2:");
+    scanf("%d",&b);
+    
+    c=a/b;//incompatibilidad
+    
+    printf("Resultad:",resul);
+    
+    return 1;    
+        
+}

@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobacion de que la variable no ha sido declarada en el mismo bloque más de una vez
+
+int main(){
+    int a;//
+    int a;//
+    
+    printf("Introduzca valor número 1:");
+    scanf("%d",&a);
+       
+    printf("Suma:",a);
+    return 1;    
+        
+}

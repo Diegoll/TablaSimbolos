@@ -1,0 +1,28 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobacion de que el número de parámetros formales y actuales sean los mismos
+//Comprobación de que no exista la variable previablemente
+//tipos incompatibles en la suma
+//tipos incompatibles en la asignacion
+
+float a;
+int a,b;
+int suma(){
+    int r;
+    r=a+b;
+    return r;    
+}
+
+int main(){
+    int a,b;
+    
+    printf("Introduzca valor número 1:");
+    scanf("%d",&a);
+    printf("Introduzca valor número 2:");
+    scanf("%d",&b);
+    
+    a=suma(a,b);//numero distinto de parametros
+    printf("Suma:",a);
+    return 1;    
+        
+}

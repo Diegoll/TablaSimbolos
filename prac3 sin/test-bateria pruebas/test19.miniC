@@ -1,0 +1,15 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobación de que la variable tiene un tipo permitido
+//Comprobación compatibilidad de tipos
+
+int main(){
+    string a;//
+        
+    printf("Introduzca valor número 1:");
+    scanf("%d",&a);
+       
+    printf("Suma:",a);//
+    return 0;    
+        
+}
