@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobacion de que el número de parámetros formales y actuales sean del mismo tipo y ordenados
+
+int suma(int a, float b){
+    int r;
+    r=a+b;
+    return r;    
+}
+
+int main(){
+    float a
+    int b;
+    int l;
+    
+    printf("Introduzca valor número 1:");
+    scanf("%d",&a);
+    printf("Introduzca valor número 2:");
+    scanf("%d",&b);
+    
+    l=suma(a,b);
+    printf("Suma:",l);
+    return 1;    
+        
+}

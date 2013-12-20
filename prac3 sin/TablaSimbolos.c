@@ -14,7 +14,7 @@
  * Funciones de los nodos
  */////////////////////////////////////////
 
-TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea, TDato tipopila)
+TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
 {
     TSNodo *n=(TSNodo *) malloc (sizeof(TSNodo));
     n->entrada=entrada;
@@ -22,8 +22,7 @@ TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, 
     n->tipo=Dato;
     n->num_param=parametros;
     n->linea=linea;
-    n->tipopila=tipopila;
-    n->error=0;
+    
     return *n;
 };
 
@@ -56,8 +55,6 @@ int compararNodos(TSNodo n1, TSNodo n2)
 };
 
 void asignarTipoDatoNodo(TSNodo *n, TDato tipo) {n->tipo=tipo;};
-
-void asignarTipoPilaNodo(TSNodo *n, TDato tipo) {n->tipopila=tipo;};
 
 //void incrementarNumParNodo(TSNodo *n);
 
@@ -144,34 +141,6 @@ int existeNodo(TablaSimbolos TS, char *nombre)
         i++;
     }
     return -1;
-};
-
-int existeNodoScope(TablaSimbolos TS, char *nombre)
-{
-    //devolvia TSnodo pero venia muy mal. Ahora devuelve -1, o la posicion en la tabla simbolos
-    
-    int i, nohecho;
-    nohecho=1;
-    i=TS.tam_log-1;
-    
-    while((nohecho)&&(i>=0))
-    {
-        if(strcmp(TS.tabla[i].nombre, nombre)==0)
-        {
-            nohecho=0;
-            return i;
-        }
-        if(TS.tabla[i].entrada==marca){
-            nohecho=0;
-        }
-        i--;
-    }
-    return -1;
-};
-
-TSNodo getNodoi(TablaSimbolos *TS, int i)
-{
-    return TS->tabla[i];
 };
 
 void tsMete(TablaSimbolos *TS, TSNodo n, char *resultado)

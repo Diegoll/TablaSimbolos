@@ -1,0 +1,26 @@
+#include <stdio.h>
+
+int main(){
+string cadena,cadena2;
+
+scanf("%s",&cadena);
+scanf("%s",&cadena2);
+
+a = strlen(cadena);
+
+strcat(cadena, cadena2);
+
+strncat(cadea,cadena2, 5);
+
+if(strcmp(cadena,cadena2))
+printf("Las cadenas son iguales");
+
+strcpy(cadena,cadena2);
+
+strchr(cadena,cadena2);
+
+strext(cadena,cadena2);
+}
+
+
+

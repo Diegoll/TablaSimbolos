@@ -48,8 +48,6 @@ struct entradas {
 	TDato tipo;		//tipo de dato al que hace referencia la entrada en caso de que las entradas se refieran a funciones, variables o parametros
 	int num_param;			//numero de parametros de las funciones, si no es una funcion es -1
 	int linea;				//linea donde se declara o se usa por primera vez
-        TDato tipopila;
-        int error;
 };
 typedef struct entradas TSNodo;
 
@@ -67,7 +65,7 @@ typedef struct pila TablaSimbolos;
 
 ///////////////////////////////////////////     Metodos sobre los nodos
 
-TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea, TDato tipopila);
+TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea);
 char* getNombreNodo(TSNodo *n);
 TEntrada getTipoNodo(TSNodo n);
 TDato getTipoDatoNodo(TSNodo n);
@@ -78,7 +76,6 @@ char* getNombreDatoNodo(TSNodo n);
 char* getNombreTipoDatoNodo(TSNodo n);
 int compararNodos(TSNodo n1, TSNodo n2);
 void asignarTipoDatoNodo(TSNodo *n, TDato tipo);
-void asignarTipoPilaNodo(TSNodo *n, TDato tipo);
 void incrementarNumParNodo(TSNodo *n);
 void borrarNodo(TSNodo *n);
 void mostrarNodo(TSNodo n);
@@ -94,10 +91,8 @@ void deleteNodo(TablaSimbolos *TS);
 void deleteBloque(TablaSimbolos *TS);
 void deleteTS(TablaSimbolos *TS);
 TSNodo *getNodo(TablaSimbolos *TS);
-TSNodo getNodoi(TablaSimbolos *TS, int i);
 TSNodo comprobarInsercion(TablaSimbolos TS, char *nombre, int nres);
 int existeNodo(TablaSimbolos TS, char *nombre);
-int existeNodoScope(TablaSimbolos TS, char *nombre);
 void tsMete(TablaSimbolos *p, TSNodo n, char *resultado);
 TSNodo tsSaca(TablaSimbolos *p);
 int isEmpty(TablaSimbolos p);

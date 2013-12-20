@@ -1,0 +1,22 @@
+#include <stdio.h>
+#include "stdlib.h" 
+//Comprobación del ambito
+//en el ambito de un identificador puede declararse otro con el mismo nombre,
+//pero no en el mismo bloque en el que está declarado el primero
+
+int suma(int a){
+    int sol;
+    sol=a+2;
+    return sol;    
+}
+
+int main(){
+    int a;
+    int a;
+    
+    a=suma(2);
+    printf("Resultado:",a);
+    
+    return 1;    
+        
+}

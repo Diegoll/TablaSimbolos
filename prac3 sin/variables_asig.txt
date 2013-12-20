@@ -1,0 +1,28 @@
+#include <stdio.h>
+#define MAX 100
+int entero1=1;
+int entero2;
+char char1="c";
+char char2;
+string cadena1="hola";
+string cadena2;
+
+int main(){
+
+printf("Hola Low, introduzcamos un entero, caracter y una cadena \n");
+scanf("%d",&entero2);
+scanf("%c",&char2);
+scanf("%s",cadena2);
+
+printf("%d, %d, %c, %c, %s, %s\n"entero1,entero2,char1,char2,cadena1,cadena2,);
+
+scanf("%d %d",&entero1,&entero2);
+
+printf("%d %d \n",entero1,entero2);
+
+entero1=MAX;
+printf("%d \n",entero1);
+
+
+
+}

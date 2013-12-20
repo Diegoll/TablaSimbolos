@@ -1,0 +1,12 @@
+#include <stdio.h>
+#include "stdlib.h" 
+typedef Int dato_entero;
+//Comprobacion de que la definicion del tipo de dato sea correcta
+//Error_lexico, es int no Int
+
+int main(){
+    
+    printf("Hola mundo :) ");
+    return 1;    
+        
+}

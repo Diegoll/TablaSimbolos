@@ -24,16 +24,16 @@ int main(int argc, char** argv) {
     TablaSimbolos ts2 = newTablaSimbolos();
 
     printf("\ncrear nodo 1 \n");
-    TSNodo n1 = nuevaEntrada(variable,"contador",tint,0,10);
+    TSNodo n1 = nuevaEntrada(variable,"contador",tint,0,10,tint);
     mostrarNodo(n1);
     printf("\ncrear nodo 2 \n");
-    TSNodo n2 = nuevaEntrada(variable,"contador",tint,0,11);
+    TSNodo n2 = nuevaEntrada(variable,"contador",tint,0,11,tint);
     mostrarNodo(n2);
     printf("\ncrear nodo 3 \n");
-    TSNodo n3 = nuevaEntrada(variable,"cadena1",tchar,0,15);
+    TSNodo n3 = nuevaEntrada(variable,"cadena1",tchar,0,15,tint);
     mostrarNodo(n3);
     printf("\ncrear nodo 4 (marca) \n");
-    TSNodo n4 = nuevaEntrada(marca,"marca1",unknown,0,20);
+    TSNodo n4 = nuevaEntrada(marca,"marca1",unknown,0,20,tint);
     mostrarNodo(n4);
     
     printf("\n\nMete nodos n1 n3 n4 n2 en tabla 1\n");

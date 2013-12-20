@@ -1,0 +1,14 @@
+#include <stdio.h>
+#include "stdlib.h" 
+typedef int dato_entero;
+//Comprobacion de que la definicion del tipo de dato sea correcta
+//EL ERROR QUE APARECE AQUI ESTA BIEN???
+
+a int;
+
+int main(){
+    
+    printf("Hola mundo :) ");
+    return 1;    
+        
+}
