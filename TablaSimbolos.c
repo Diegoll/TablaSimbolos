@@ -15,7 +15,7 @@
  * Funciones de los nodos
  */////////////////////////////////////////
 
-TSNodo nuevaEntrada(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
+TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
 {
     TSNodo *n=(TSNodo *) malloc (sizeof(TSNodo));
     n->entrada=entrada;
@@ -208,3 +208,55 @@ void mostrarTabla(TablaSimbolos TS){
     }
     printf("Tam logico=%d", TS.tam_log);
 }
+
+int getTamTabla(TablaSimbolos TS){
+    return TS.tam;
+};
+
+TSNodo checkNombrexNodo(TablaSimbolos TS, char *nombre, int ncons, int nres){
+    TSNodo nodo=NULL;
+    int i=nres;
+    while(i<nres+ncons){
+        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
+            nodo=TS->tabla[i];
+        }
+        i++;
+    }
+    return nodo;
+};
+
+TSNodo chechDeclaracion(TablaSimbolos TS, char *nombre){
+    int i=TS->tam-1;
+    TSNodo nodo=NULL;
+
+    while(nodo==NULL && i>0){
+        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
+            nodo=TS->tabla[i];
+        }
+        i--;
+    }
+
+    return nodo;
+};
+
+TSNodo getNodoxPosicion(TablaSimbolos TS, int i){
+    return TS->tabla[i];
+};
+
+TSNodo setTipoDatoxPos(TablaSimbolos TS, int pos, enum TDato TDato, enum TDato TPila){
+    TS->tabla[pos]->TDato=TDato;
+    TS->tabla[pos]->TPila=TPila;
+};
+
+void deleteFuncionIncorrecta(TablaSimbolos *TS){
+    int tam=(*TS)->tam;
+    int nelim=(*TS)->tabla[(*TS)->tam]->num_param+1;
+    int topeaux=tam-nelim;
+
+    while(tope>topeaux){
+        deleteNodo(&((*TS)->tabla[tam]));
+        tam--;
+    }
+
+    (*TS)->tam=topeaux;
+};
