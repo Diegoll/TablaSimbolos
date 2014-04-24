@@ -44,7 +44,7 @@ typedef enum {
 struct entradas {
 	TEntrada entrada;	//tipo de la entrada
 	char nombre[100];		//identificador de la entrada, si es una marca es nulo
-	TDato TDato;		//tipo de dato al que hace referencia la entrada en caso de que las entradas se refieran a funciones, variables o parametros
+	TDato tipo;		//tipo de dato al que hace referencia la entrada en caso de que las entradas se refieran a funciones, variables o parametros
         TDato TPila;
 	int num_param;			//numero de parametros de las funciones, si no es una funcion es -1
 	int linea;				//linea donde se declara o se usa por primera vez
@@ -67,7 +67,7 @@ typedef struct pila TablaSimbolos;
 
 ///////////////////////////////////////////     Metodos sobre los nodos
 
-TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea);
+TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea, TDato tipopila);
 char* getNombreNodo(TSNodo *n);
 TEntrada getTipoNodo(TSNodo n);
 TDato getTipoDatoNodo(TSNodo n);
@@ -110,7 +110,7 @@ int getTamTabla(TablaSimbolos TS);
 
 int conforme_salgan_las_vamos_haciendo;
 TSNodo getNodoxPosicion(TablaSimbolos TS, int i);
-TSNodo setTipoDatoxPos(TablaSimbolos TS, int pos, enum TDato tDato, enum TDato tPila);
+void setTipoDatoxPos(TablaSimbolos TS, int pos, enum TDato tDato, enum TDato tPila);
 
 TSNodo checkNodoxNombre(TablaSimbolos TS, char *nombre, int ncons, int nres);
 TSNodo checkDeclaracion(TablaSimbolos TS, char *nombre);
