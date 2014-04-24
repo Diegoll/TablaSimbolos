@@ -9,13 +9,12 @@
 #include <stdlib.h> 
 #include "TablaSimbolos.h"
 
-#include "TablaSimbolos.h"
 
 /*//////////////////////////////////////////
  * Funciones de los nodos
  */////////////////////////////////////////
 
-TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea)
+TSNodo newNodo(TEntrada entrada, char *nombre, TDato Dato, int parametros, int linea, TDato tipopila)
 {
     TSNodo *n=(TSNodo *) malloc (sizeof(TSNodo));
     n->entrada=entrada;
@@ -244,50 +243,17 @@ int getTamTabla(TablaSimbolos TS){
     return TS.tam;
 };
 
-TSNodo checkNombrexNodo(TablaSimbolos TS, char *nombre, int ncons, int nres){
-    TSNodo nodo=NULL;
-    int i=nres;
-    while(i<nres+ncons){
-        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
-            nodo=TS->tabla[i];
-        }
-        i++;
-    }
-    return nodo;
+TSNodo checkNombrexNodo(TablaSimbolos *TS, char *nombre, int ncons, int nres){
+    return (getNodoi(TS,existeNodoScope(*TS, nombre)));
 };
 
-TSNodo chechDeclaracion(TablaSimbolos TS, char *nombre){
-    int i=TS->tam-1;
-    TSNodo nodo=NULL;
-
-    while(nodo==NULL && i>0){
-        if(strcmp(TS->tabla[i]->nombre, nombre)==0){
-            nodo=TS->tabla[i];
-        }
-        i--;
-    }
-
-    return nodo;
+TSNodo chechDeclaracion(TablaSimbolos *TS, char *nombre){
+    return (getNodoi(TS,existeNodoScope(*TS, nombre)));
 };
 
 TSNodo getNodoxPosicion(TablaSimbolos TS, int i){
-    return TS->tabla[i];
-};
-
-TSNodo setTipoDatoxPos(TablaSimbolos TS, int pos, enum TDato TDato, enum TDato TPila){
-    TS->tabla[pos]->TDato=TDato;
-    TS->tabla[pos]->TPila=TPila;
+    return TS.tabla[i];
 };
 
 void deleteFuncionIncorrecta(TablaSimbolos *TS){
-    int tam=(*TS)->tam;
-    int nelim=(*TS)->tabla[(*TS)->tam]->num_param+1;
-    int topeaux=tam-nelim;
-
-    while(tope>topeaux){
-        deleteNodo(&((*TS)->tabla[tam]));
-        tam--;
-    }
-
-    (*TS)->tam=topeaux;
 };
